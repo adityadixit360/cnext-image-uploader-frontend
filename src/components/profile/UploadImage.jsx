@@ -84,7 +84,7 @@ const UploadImage = () => {
   const handleFilterChange = (e) => setActiveFilter(e.target.value);
 
   const getFilterStyle = () => {
-    let filterString = `brightness(${brightness}%)`;ll
+    let filterString = `brightness(${brightness}%)`;
     
     switch (activeFilter) {
       case "sepia":
