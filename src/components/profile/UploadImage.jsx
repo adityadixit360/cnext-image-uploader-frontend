@@ -11,6 +11,7 @@ const filters = {
   invert: "Invert",
   blur: "Blur",
   saturate: "Saturate",
+  
 };
 
 const UploadImage = () => {
@@ -24,7 +25,7 @@ const UploadImage = () => {
   const [activeFilter, setActiveFilter] = useState("none");
 
   const cropperRef = useRef(null);
-
+console.log(cropperRef)
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
       setFile(acceptedFiles[0]);
