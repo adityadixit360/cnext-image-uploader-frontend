@@ -30,3 +30,15 @@
   .group-hover\:bg-gray-600:hover {
     background-color: #4a5568;
   }
+
+  .image-hover {
+    transform: scale(1.5);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    filter: blur(10px);
+  }

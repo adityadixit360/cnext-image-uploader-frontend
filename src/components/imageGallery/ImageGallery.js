@@ -95,8 +95,8 @@ const ImageGallery = ({ onBack }) => {
         </button>
       </div>
       {selectedImage ? (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg max-w-3xl w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 ">
+          <div className="bg-white p-4 rounded-lg max-w-3xl w-full ">
             <h2 className="text-2xl font-bold mb-4">Edit Image</h2>
             <Cropper
               ref={cropperRef}
@@ -153,23 +153,23 @@ const ImageGallery = ({ onBack }) => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 ">
           {loading
             ? Array.from({ length: imagesPerPage }, (_, index) => (
                 <div
                   key={index}
-                  className="animate-pulse bg-gray-300 h-48 w-full"
+                  className="animate-pulse bg-gray-300 h-48 w-full "
                 ></div>
               ))
             : currentImages.map((image) => (
                 <div
                   key={image.id}
-                  className="relative bg-white shadow rounded overflow-hidden"
+                  className="relative bg-white shadow rounded overflow-hidden relative rounded-lg "
                 >
                   <img
                     src={image.url}
                     alt={image.name}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-cover relative z-0 rounded-lg transition-all duration-300 hover:scale-110"
                   />
                   <div className="absolute top-0 right-0 p-2 flex items-center space-x-2 bg-gray-700 rounded-l">
                     <FiDownload
