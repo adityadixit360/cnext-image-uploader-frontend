@@ -25,7 +25,7 @@ const UploadImage = () => {
   const [activeFilter, setActiveFilter] = useState("none");
 
   const cropperRef = useRef(null);
-console.log(cropperRef)
+  // console.log(cropperRef)
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles && acceptedFiles.length > 0) {
       setFile(acceptedFiles[0]);
@@ -45,7 +45,12 @@ console.log(cropperRef)
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Uploading:", { file: croppedImage || file, title, description, filter: activeFilter });
+    console.log("Uploading:", {
+      file: croppedImage || file,
+      title,
+      description,
+      filter: activeFilter,
+    });
     setFile(null);
     setCroppedImage(null);
     setTitle("");
@@ -86,7 +91,7 @@ console.log(cropperRef)
 
   const getFilterStyle = () => {
     let filterString = `brightness(${brightness}%)`;
-    
+
     switch (activeFilter) {
       case "sepia":
         filterString += " sepia(100%)";
@@ -148,7 +153,11 @@ console.log(cropperRef)
             {file && !isCropping && (
               <div className="relative">
                 <img
-                  src={croppedImage ? URL.createObjectURL(croppedImage) : URL.createObjectURL(file)}
+                  src={
+                    croppedImage
+                      ? URL.createObjectURL(croppedImage)
+                      : URL.createObjectURL(file)
+                  }
                   alt="Preview"
                   className="max-w-full h-auto max-h-64 mx-auto rounded-lg shadow-md"
                   style={getFilterStyle()}
@@ -172,10 +181,16 @@ console.log(cropperRef)
                   guides={true}
                 />
                 <div className="mt-4 flex justify-center space-x-4">
-                  <button onClick={cropImage} className="px-4 py-2 bg-green-500 text-white rounded">
+                  <button
+                    onClick={cropImage}
+                    className="px-4 py-2 bg-green-500 text-white rounded"
+                  >
                     Crop
                   </button>
-                  <button onClick={cancelCropping} className="px-4 py-2 bg-red-500 text-white rounded">
+                  <button
+                    onClick={cancelCropping}
+                    className="px-4 py-2 bg-red-500 text-white rounded"
+                  >
                     Cancel
                   </button>
                 </div>
@@ -227,16 +242,28 @@ console.log(cropperRef)
                   </select>
                 </div>
                 <div className="flex justify-center space-x-4">
-                  <button onClick={startCropping} className="px-4 py-2 bg-blue-500 text-white rounded">
+                  <button
+                    onClick={startCropping}
+                    className="px-4 py-2 bg-blue-500 text-white rounded"
+                  >
                     <FaCrop className="inline-block mr-2" /> Crop
                   </button>
-                  <button onClick={() => setBrightness(100)} className="px-4 py-2 bg-yellow-500 text-white rounded">
+                  <button
+                    onClick={() => setBrightness(100)}
+                    className="px-4 py-2 bg-yellow-500 text-white rounded"
+                  >
                     <FaAdjust className="inline-block mr-2" /> Reset Brightness
                   </button>
-                  <button onClick={() => setRotation(0)} className="px-4 py-2 bg-purple-500 text-white rounded">
+                  <button
+                    onClick={() => setRotation(0)}
+                    className="px-4 py-2 bg-purple-500 text-white rounded"
+                  >
                     <FaUndo className="inline-block mr-2" /> Reset Rotation
                   </button>
-                  <button onClick={() => setActiveFilter("none")} className="px-4 py-2 bg-green-500 text-white rounded">
+                  <button
+                    onClick={() => setActiveFilter("none")}
+                    className="px-4 py-2 bg-green-500 text-white rounded"
+                  >
                     <FaFilter className="inline-block mr-2" /> Reset Filter
                   </button>
                 </div>

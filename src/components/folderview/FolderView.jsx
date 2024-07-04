@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaFolder, FaTh, FaBars } from "react-icons/fa";
 
 const mockFolders = Array.from({ length: 10 }, (_, index) => ({
@@ -8,9 +8,27 @@ const mockFolders = Array.from({ length: 10 }, (_, index) => ({
 
 const FolderView = ({ onFolderClick }) => {
   const [viewType, setViewType] = useState("grid");
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 800);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const toggleView = () => {
     setViewType((prevType) => (prevType === "grid" ? "list" : "grid"));
+  };
+
+  const handleFolderClick = (folderId) => {
+    if (isMobile) {
+      onFolderClick(folderId);
+    }
   };
 
   return (
@@ -28,7 +46,8 @@ const FolderView = ({ onFolderClick }) => {
             className={`bg-white shadow-lg rounded-lg p-4 cursor-pointer transform transition-transform hover:scale-105 hover:bg-gray-100 ${
               viewType === "list" ? "w-full max-w-xs shadow-none" : ""
             }`}
-            onDoubleClick={() => onFolderClick(folder.id)}
+            onClick={() => handleFolderClick(folder.id)}
+            onDoubleClick={() => !isMobile && onFolderClick(folder.id)}
           >
             <div className="flex items-center justify-center mb-2">
               <FaFolder className="text-yellow-500 w-12 h-12" />
@@ -53,4 +72,3 @@ const FolderView = ({ onFolderClick }) => {
 };
 
 export default FolderView;
-
