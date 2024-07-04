@@ -52,7 +52,7 @@ const App = () => {
             )
           }
         /> */}
-        <Route exact path="/userprofile" element={<UploadImage />} />
+        <Route exact path="/uploadimage" element={<UploadImage />} />
         <Route exact path="/gallery" element={<ImageGallery />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Register />} />
