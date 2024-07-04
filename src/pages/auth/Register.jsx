@@ -12,9 +12,7 @@ const Register = () => {
 
   const handleSignup = (e) => {
     e.preventDefault();
-    // Handle signup logic here
     console.log("Signup with:", { name, email, password });
-    // After successful signup, you might want to navigate to a different page
     // navigate('/login');
   };
 
