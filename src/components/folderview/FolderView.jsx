@@ -34,6 +34,9 @@ const FolderView = ({ onFolderClick }) => {
     );
   }, [searchTerm]);
   console.log(searchTerm)
+  console.log(searchTerm)
+  console.log(searchTerm);
+  
 
   const toggleView = () => {
     setViewType((prevType) => (prevType === "grid" ? "list" : "grid"));
