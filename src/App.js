@@ -6,6 +6,8 @@ import UserProfile from './components/profile/UserProfile';
 import UploadImage from './components/profile/UploadImage';
 import ImageGallery from './components/imageGallery/ImageGallery';
 import Register from './pages/auth/Register';
+import FileExplorer from './data/FileExplorer';
+import { mockFileSystem } from './data/mockFileData';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -56,6 +58,10 @@ const App = () => {
         <Route exact path="/gallery" element={<ImageGallery />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Register />} />
+        <Route
+          path="/file"
+          element={<FileExplorer fileSystem={mockFileSystem} />}
+        />
       </Routes>
     </BrowserRouter>
   );

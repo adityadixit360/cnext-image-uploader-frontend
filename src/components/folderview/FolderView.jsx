@@ -74,7 +74,7 @@ const FolderView = ({ onFolderClick }) => {
             onDoubleClick={() => !isMobile && onFolderClick(folder.id)}
           >
             <div className={`p-4 ${viewType === "list" ? "flex items-center" : ""}`}>
-              <div className={`flex items-center justify-center ${viewType === "list" ? "mr-4" : "mb-3"}`}>
+              <div className={`flex items-center justify-start ${viewType === "list" ? "mr-4" : "mb-3"}`}>
                 <FaFolder className="text-yellow-500 w-12 h-12" />
               </div>
               <div className={`${viewType === "list" ? "flex-grow" : ""}`}>
