@@ -5,6 +5,7 @@ import Login from './pages/auth/Login';
 import UserProfile from './components/profile/UserProfile';
 import UploadImage from './components/profile/UploadImage';
 import ImageGallery from './components/imageGallery/ImageGallery';
+import Register from './pages/auth/Register';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -51,9 +52,10 @@ const App = () => {
             )
           }
         /> */}
-        <Route exact path="/userprofile" element={<UploadImage />} />
+        <Route exact path="/uploadimage" element={<UploadImage />} />
         <Route exact path="/gallery" element={<ImageGallery />} />
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
