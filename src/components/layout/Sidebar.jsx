@@ -77,10 +77,8 @@ const Sidebar = () => {
           isSidebarOpen || windowWidth >= 768 ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0 z-40`}
       >
-        <div className="flex items-center justify-center h-16 bg-gray-900">
-          <span className="text-2xl font-semibold text-orange-400">
-            Career360
-          </span>
+        <div className="flex items-center justify-center h-20 bg-gray-900 bg-white">
+          <img src="https://cnextassets.careers360.com/frontend-common/_react_common/assets/logo-blue.svg" alt="careerLogo" className="h-6 w-26"></img>
         </div>
 
         <div className="px-4 mt-6">
@@ -157,7 +155,7 @@ const Sidebar = () => {
           >
             <FaBars className="w-6 h-6" />
           </button>
-          <form onSubmit={handleSearch} className="flex-grow max-w-3xl mx-auto">
+          <form onSubmit={handleSearch} className="flex-grow max-w-3xl mx-auto align-items center">
             <div className="flex items-center bg-gray-100 rounded-full overflow-hidden">
               <input
                 type="text"
@@ -168,7 +166,7 @@ const Sidebar = () => {
               />
               <button
                 type="submit"
-                className="bg-orange-400 text-white p-3 rounded-full hover:bg-orange-500 transition duration-300 ease-in-out"
+                className="bg-violet-900 text-white p-3 rounded-full hover:bg-violet-500 transition duration-300 ease-in-out"
               >
                 <FaSearch className="w-5 h-5" />
               </button>
