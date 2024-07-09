@@ -148,14 +148,14 @@ const Sidebar = () => {
       {/* Main content */}
       <div className={`flex-1 flex flex-col ${windowWidth >= 768 ? 'md:ml-64' : ''}`}>
         {/* Header with search and menu button */}
-        <header className="bg-white shadow-md p-4 fixed w-full z-30 flex items-center">
+        <header className="bg-white shadow-md p-4 fixed w-full z-30 flex items-center justify-between md:justify-start">
           <button
             className="md:hidden mr-4 text-gray-600 hover:text-gray-900"
             onClick={toggleSidebar}
           >
             <FaBars className="w-6 h-6" />
           </button>
-          <form onSubmit={handleSearch} className="flex-grow max-w-3xl mx-auto align-items center">
+          <form onSubmit={handleSearch} className="flex-grow md:flex-grow-0 md:w-auto">
             <div className="flex items-center bg-gray-100 rounded-full overflow-hidden">
               <input
                 type="text"
@@ -173,6 +173,8 @@ const Sidebar = () => {
             </div>
           </form>
         </header>
+
+
 
         {/* render pages */}
         <main className="flex-1 p-8 mt-24">{renderPage()}</main>

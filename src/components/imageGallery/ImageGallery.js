@@ -185,10 +185,6 @@
 
 
 
-
-
-
-
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { FiDownload, FiEdit2, FiArrowLeft, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { Cropper } from "react-cropper";
