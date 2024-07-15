@@ -144,7 +144,7 @@
 
 
 import React, { useState, useEffect } from "react";
-import { FaFolder, FaFile, FaTh, FaList, FaSearch } from "react-icons/fa";
+import { FaFolder, FaFile, FaTh, FaList, FaSearch, FaFolderPlus} from "react-icons/fa";
 import apiClient from "../../../src/api";
 
 const FolderView = ({ onFolderClick }) => {
@@ -227,9 +227,13 @@ const FolderView = ({ onFolderClick }) => {
     return <div>{error}</div>;
   }
 
+  const handleCreateFolder = ()=> {
+    
+  }
+
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <div className="relative">
           <input
             type="text"
@@ -240,7 +244,27 @@ const FolderView = ({ onFolderClick }) => {
           />
           <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
+      </div> */}
+
+      <div className="mb-6 flex items-center">
+      <div className="relative w-full">
+        <input
+          type="text"
+          placeholder="Search folders and files..."
+          className="w-full px-4 py-2 pl-10 pr-4 text-gray-700 bg-white border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
       </div>
+      <button
+        onClick={handleCreateFolder}
+        className="ml-4 px-3 text-white bg-violet-800 rounded-full hover:bg-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-900"
+      >
+        <FaFolderPlus className="m-2 text-2xl" />
+      </button>
+      </div>
+
 
       <div className={
         viewType === "grid"
