@@ -126,20 +126,11 @@ const FolderContents = ({ initialFolderId }) => {
       <Breadcrumb path={path} onNavigate={handleNavigate} />
       {folderItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center text-center text-gray-500 mt-4 h-32 w-full bg-gray-100 rounded-lg border border-gray-300">
-          <svg
-            className="h-12 w-12 text-gray-400 mb-2"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 17v-2a4 4 0 018 0v2m0 0v2a4 4 0 01-8 0v-2m8 0H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2h8V7a2 2 0 012-2h2a2 2 0 012 2v8a2 2 0 01-2 2h-6z"
-            ></path>
-          </svg>
+          <img
+            src="./images/paper.png"
+            alt="no-item-found"
+            className="h-8 w-8"
+          />
           <p className="text-lg font-medium">No items found</p>
           <p className="text-sm text-gray-400">This folder is empty.</p>
         </div>
