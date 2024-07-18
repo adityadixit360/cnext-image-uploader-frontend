@@ -1,21 +1,185 @@
+// import React, { useState, useEffect } from "react";
+// import apiClient from "../../redux/apiClient";
+// import { FolderIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+// import { FaFile } from "react-icons/fa6";
+
+// const Breadcrumb = ({ path, onNavigate }) => {
+//   return (
+//     <div className="flex items-center space-x-2 text-gray-600 mb-4">
+//       {path.map((item, index) => (
+//         <React.Fragment key={item.id}>
+//           <button
+//             className="text-blue-600 hover:underline"
+//             onClick={() => onNavigate(item.id, index)}
+//           >
+//             {item.name}
+//           </button>
+//           {index < path.length - 1 && (
+//             <ChevronRightIcon className="h-5 w-5 text-gray-500" />
+//           )}
+//         </React.Fragment>
+//       ))}
+//     </div>
+//   );
+// };
+
+// const FolderContents = ({ initialFolderId }) => {
+//   const [folderId, setFolderId] = useState(initialFolderId);
+//   const [folderItems, setFolderItems] = useState([]);
+//   const [isLoading, setIsLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const [path, setPath] = useState([
+//     { id: initialFolderId, name: initialFolderId },
+//   ]);
+
+//   useEffect(() => {
+//     const fetchFolderItems = async (folderId) => {
+//       setIsLoading(true);
+//       try {
+//         const res = await apiClient.get(`/list-files/${folderId}/`);
+//         console.log(res?.data);
+//         const { files, folders } = res?.data;
+
+//         const formattedFiles = files.map((file) => ({
+//           id: file.Key,
+//           name: file.Key.split("/").pop(),
+//           lastModified: new Date(file.LastModified).toLocaleDateString(),
+//           type: "file",
+//         }));
+
+//         const formattedFolders = folders.map((folder) => ({
+//           id: folder.folderName,
+//           name: folder.folderName.split("/").filter(Boolean).pop(),
+//           lastModified: new Date(folder.LastModified).toLocaleDateString(),
+//           totalItems: folder.FileCount + folder.FolderCount,
+//           type: "folder",
+//         }));
+
+//         const items = [...formattedFolders, ...formattedFiles];
+//         setFolderItems(items);
+//       } catch (error) {
+//         console.error("Error fetching folder contents:", error);
+//         setError("Failed to load folder contents. Please try again.");
+//       }
+//       setIsLoading(false);
+//     };
+
+//     if (folderId) {
+//       fetchFolderItems(folderId);
+//     }
+//   }, [folderId]);
+
+//   const handleNavigate = (id, index) => {
+//     setPath((prevPath) => prevPath.slice(0, index + 1));
+//     setFolderId(id);
+//   };
+
+//   const handleFolderClick = (folder) => {
+//     setPath((prevPath) => [...prevPath, { id: folder.id, name: folder.name }]);
+//     setFolderId(folder.id);
+//   };
+
+//   const renderItem = (item) => {
+//     return (
+//       <div key={item.id}>
+//         <div
+//           className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2"
+//           onClick={() => {
+//             if (item.type === "folder") {
+//               handleFolderClick(item);
+//             }
+//           }}
+//         >
+//           {item.type === "folder" ? (
+//             <ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-500 mr-2" />
+//           ) : (
+//             <FaFile className="h-5 w-5 flex-shrink-0 text-gray-500 mr-2" />
+//           )}
+//           {item.type === "folder" ? (
+//             <FolderIcon className="h-6 w-6 flex-shrink-0 text-yellow-500 mr-2" />
+//           ) : (
+//             // <FaFile className="h-5 w-5 flex-shrink-0 text-gray-500 mr-2" />
+//             null
+//           )}
+//           <span
+//             className="text-sm font-medium text-gray-900 truncate flex-grow"
+//             title={item.name}
+//           >
+//             {item.name}
+//           </span>
+//           <span className="text-sm text-gray-500 mr-4">
+//             {item.type === "folder" ? `${item.totalItems} items` : "File"}
+//           </span>
+//           <span className="text-sm text-gray-500">{item.lastModified}</span>
+//         </div>
+//       </div>
+//     );
+//   };
+
+//   if (isLoading) {
+//     return (
+//       <div className="flex justify-center items-center h-screen">
+//         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return <div className="text-center text-red-500 p-4">{error}</div>;
+//   }
+
+//   return (
+//     <div>
+//       <Breadcrumb path={path} onNavigate={handleNavigate} />
+//       {folderItems.map(renderItem)}
+//     </div>
+//   );
+// };
+
+// export default FolderContents;
+
 import React, { useState, useEffect } from "react";
 import apiClient from "../../redux/apiClient";
-import { FolderIcon } from "@heroicons/react/24/outline";
+import { FolderIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { FaFile } from "react-icons/fa6";
 
-const FolderContents = ({ folderId }) => {
+const Breadcrumb = ({ path, onNavigate }) => {
+  return (
+    <div className="flex items-center space-x-2 text-gray-600 mb-4">
+      {path.map((item, index) => (
+        <React.Fragment key={item.id}>
+          <button
+            className="text-blue-600 hover:underline"
+            onClick={() => onNavigate(item.id, index)}
+          >
+            {item.name}
+          </button>
+          {index < path.length - 1 && (
+            <ChevronRightIcon className="h-5 w-5 text-gray-500" />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+};
+
+const FolderContents = ({ initialFolderId }) => {
+  const [folderId, setFolderId] = useState(initialFolderId);
   const [folderItems, setFolderItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [path, setPath] = useState([
+    { id: initialFolderId, name: initialFolderId },
+  ]);
 
   useEffect(() => {
-    const fetchFolderItems = async () => {
+    const fetchFolderItems = async (folderId) => {
       setIsLoading(true);
       try {
         const res = await apiClient.get(`/list-files/${folderId}/`);
         console.log(res?.data);
         const { files, folders } = res?.data;
 
-        // Format files
         const formattedFiles = files.map((file) => ({
           id: file.Key,
           name: file.Key.split("/").pop(),
@@ -23,10 +187,9 @@ const FolderContents = ({ folderId }) => {
           type: "file",
         }));
 
-        // Format folders
         const formattedFolders = folders.map((folder) => ({
           id: folder.folderName,
-          name: folder.folderName.split("/").filter(Boolean).pop(), // Get folder name
+          name: folder.folderName.split("/").filter(Boolean).pop(),
           lastModified: new Date(folder.LastModified).toLocaleDateString(),
           totalItems: folder.FileCount + folder.FolderCount,
           type: "folder",
@@ -42,56 +205,53 @@ const FolderContents = ({ folderId }) => {
     };
 
     if (folderId) {
-      fetchFolderItems();
+      fetchFolderItems(folderId);
     }
   }, [folderId]);
 
-  const handleFolderClick = (folder) => {
-    // Handle navigation into subfolders here if needed
-    console.log(`Clicked folder: ${folder.name}`);
-    // Optionally, you can implement navigation logic to enter into subfolders
-    // For simplicity, this example doesn't implement nested folder navigation
+  const handleNavigate = (id, index) => {
+    setPath((prevPath) => prevPath.slice(0, index + 1));
+    setFolderId(id);
   };
 
-  const renderFolder = (folder) => {
+  const handleFolderClick = (folder) => {
+    setPath((prevPath) => [...prevPath, { id: folder.id, name: folder.name }]);
+    setFolderId(folder.id);
+  };
+
+  const renderItem = (item) => {
     return (
-      <div
-        key={folder.id}
-        className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2"
-        onClick={() => handleFolderClick(folder)}
-      >
-        <FolderIcon className="h-6 w-6 flex-shrink-0 text-yellow-500 mr-4" />
-        <span
-          className="text-sm font-medium text-gray-900 truncate flex-grow"
-          title={folder.name}
+      <div key={item.id}>
+        <div
+          className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2"
+          onClick={() => {
+            if (item.type === "folder") {
+              handleFolderClick(item);
+            }
+          }}
         >
-          {folder.name}
-        </span>
-        <span className="text-sm text-gray-500 mr-4">
-          {folder.type === "folder" ? `${folder.totalItems} items` : "File"}
-        </span>
-        <span className="text-sm text-gray-500">{folder.lastModified}</span>
+          {item.type === "folder" ? (
+            <ChevronRightIcon className="h-5 w-5 flex-shrink-0 text-gray-500 mr-2" />
+          ) : (
+            <FaFile className="h-5 w-5 flex-shrink-0 text-gray-500 mr-2" />
+          )}
+          {item.type === "folder" ? (
+            <FolderIcon className="h-6 w-6 flex-shrink-0 text-yellow-500 mr-2" />
+          ) : // <FaFile className="h-5 w-5 flex-shrink-0 text-gray-500 mr-2" />
+          null}
+          <span
+            className="text-sm font-medium text-gray-900 truncate flex-grow"
+            title={item.name}
+          >
+            {item.name}
+          </span>
+          <span className="text-sm text-gray-500 mr-4">
+            {item.type === "folder" ? `${item.totalItems} items` : "File"}
+          </span>
+          <span className="text-sm text-gray-500">{item.lastModified}</span>
+        </div>
       </div>
     );
-  };
-
-  const renderNestedFolders = () => {
-    return folderItems.map((item) => {
-      if (item.type === "folder") {
-        return (
-          <div key={item.id}>
-            {renderFolder(item)}
-            {/* Recursively render nested folders */}
-            <div className="ml-4">
-              {/* Adjust margin as needed */}
-              <FolderContents folderId={item.id} />
-            </div>
-          </div>
-        );
-      } else {
-        return renderFolder(item);
-      }
-    });
   };
 
   if (isLoading) {
@@ -106,7 +266,33 @@ const FolderContents = ({ folderId }) => {
     return <div className="text-center text-red-500 p-4">{error}</div>;
   }
 
-  return <div>{renderNestedFolders()}</div>;
+  return (
+    <div>
+      <Breadcrumb path={path} onNavigate={handleNavigate} />
+      {folderItems.length === 0 ? (
+        <div className="flex flex-col items-center justify-center text-center text-gray-500 mt-4 h-32 w-full bg-gray-100 rounded-lg border border-gray-300">
+          <svg
+            className="h-12 w-12 text-gray-400 mb-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 17v-2a4 4 0 018 0v2m0 0v2a4 4 0 01-8 0v-2m8 0H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2v2h8V7a2 2 0 012-2h2a2 2 0 012 2v8a2 2 0 01-2 2h-6z"
+            ></path>
+          </svg>
+          <p className="text-lg font-medium">No items found</p>
+          <p className="text-sm text-gray-400">This folder is empty.</p>
+        </div>
+      ) : (
+        folderItems.map(renderItem)
+      )}
+    </div>
+  );
 };
 
 export default FolderContents;

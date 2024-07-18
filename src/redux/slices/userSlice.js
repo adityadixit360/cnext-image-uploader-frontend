@@ -6,7 +6,11 @@ const userSlice = createSlice({
     user: [],
     errors: null,
   },
-  reducers: {},
+  reducers: {
+    logoutUser: (state, action) => {
+      state.user = null;
+    },
+  },
 });
 
 export default userSlice;
