@@ -152,7 +152,7 @@ const FileExplorer = () => {
           </div>
 
           {currentFolder ? (
-            <FolderContents folderId={currentFolder.name} />
+            <FolderContents initialFolderId={currentFolder.name} />
           ) : (
             <div
               className={
