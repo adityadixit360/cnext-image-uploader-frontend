@@ -6,13 +6,11 @@ const Header = () => {
   return (
     <header className="bg-gray-50 text-white p-4 fixed w-full z-10 shadow-lg">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-green-500">
-          {/* <Link to="/">ImageUploader</Link> */}
-        </h1>
+        <h1 className="text-2xl font-bold text-green-500"></h1>
         <nav className="hidden lg:flex space-x-4 items-center">
-          <Link to="/" className="hover:bg-gray-700 p-2 rounded">
+          {/* <Link to="/" className="hover:bg-gray-700 p-2 rounded">
             Dashboard
-          </Link>
+          </Link> */}
           <UserProfileDropdown />
         </nav>
       </div>
@@ -60,7 +58,6 @@ export const UserProfileDropdown = () => {
           <button
             className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
             onClick={() => {
-              // Add logout logic here
               console.log("Logged out");
             }}
           >
