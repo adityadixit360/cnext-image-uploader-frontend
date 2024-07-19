@@ -1,14 +1,30 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { HomeIcon, Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-
-const navItems = [{ name: "Dashboard", path: "/", icon: HomeIcon }];
+import { Link, useLocation, useParams } from "react-router-dom";
+import {
+  HomeIcon,
+  Bars3Icon,
+  XMarkIcon,
+  FolderIcon,
+} from "@heroicons/react/24/outline";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { folderName } = useParams();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+  const navItems = [
+    { name: "Dashboard", path: "/", icon: HomeIcon },
+    ...(folderName
+      ? [
+          {
+            name: folderName,
+            path: `/folder-content/${folderName}`,
+            icon: FolderIcon,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <>

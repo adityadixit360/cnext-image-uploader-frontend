@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FolderIcon,
-  ArrowLeftIcon,
   MagnifyingGlassCircleIcon,
+  PlusIcon,
 } from "@heroicons/react/24/outline";
 import apiClient from "../../redux/apiClient";
-import FolderContents from "./FolderContents";
 import Loader from "../../utils/Loader";
 import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
 
 const FileExplorer = () => {
   const [folders, setFolders] = useState([]);
-  const [currentFolder, setCurrentFolder] = useState(() => {
-    const savedFolder = localStorage.getItem("currentFolder");
-    return savedFolder ? JSON.parse(savedFolder) : null;
-  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFolders, setFilteredFolders] = useState([]);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchFolders();
@@ -32,7 +32,6 @@ const FileExplorer = () => {
       const formattedFolders = res?.data?.folders.map((folder) => ({
         id: folder.id || Math.random().toString(36).substr(2, 9),
         name: folder.folderName,
-        // lastModified: new Date(folder.FileModified).toLocaleDateString(),
         lastModified: folder.LastModified,
         totalItems: folder.FileCount + folder.FolderCount,
       }));
@@ -46,29 +45,35 @@ const FileExplorer = () => {
   };
 
   const openFolder = (folder) => {
-    setCurrentFolder(folder);
-    localStorage.setItem("currentFolder", JSON.stringify(folder));
-    console.log(`Opening folder: ${folder.name}`);
-  };
-
-  const goBack = () => {
-    setCurrentFolder(null);
-    localStorage.removeItem("currentFolder");
+    navigate(`/folder-content/${folder.name}`);
   };
 
   const toggleViewMode = () => {
     setViewMode((prevMode) => (prevMode === "grid" ? "list" : "grid"));
   };
 
-  useEffect(() => {
-    if (!currentFolder) {
-      setFilteredFolders(
-        folders.filter((folder) =>
-          folder.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
+  const handleAddFolder = async () => {
+    if (newFolderName.trim()) {
+      try {
+        // Replace this with your actual API call to create a new folder
+        await apiClient.post("/create-folder/", { folderName: newFolderName });
+        fetchFolders(); // Refresh the folder list
+        setNewFolderName("");
+        setIsAddingFolder(false);
+      } catch (error) {
+        console.error("Error creating folder:", error);
+        setError("Failed to create folder. Please try again.");
+      }
     }
-  }, [searchTerm, folders, currentFolder]);
+  };
+
+  useEffect(() => {
+    setFilteredFolders(
+      folders.filter((folder) =>
+        folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, folders]);
 
   const renderFolder = (folder) => {
     if (viewMode === "grid") {
@@ -132,18 +137,11 @@ const FileExplorer = () => {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="flex items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 truncate">
+              My Folders
+            </h1>
             <div className="flex items-center">
-              {currentFolder && (
-                <button onClick={goBack} className="mr-4">
-                  <ArrowLeftIcon className="h-6 w-6 text-gray-600" />
-                </button>
-              )}
-              <h1 className="text-3xl font-bold text-gray-900 truncate">
-                {currentFolder ? currentFolder.name : "My Folders"}
-              </h1>
-            </div>
-            {!currentFolder && (
-              <div className="relative">
+              <div className="relative mr-4">
                 <input
                   type="text"
                   placeholder="Search folders"
@@ -153,31 +151,56 @@ const FileExplorer = () => {
                 />
                 <MagnifyingGlassCircleIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
-            )}
+              <button
+                onClick={() => setIsAddingFolder(true)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+              >
+                <PlusIcon className="h-5 w-5 inline-block mr-2" />
+                Add Folder
+              </button>
+            </div>
           </div>
 
-          {currentFolder ? (
-            <FolderContents initialFolderId={currentFolder.name} />
-          ) : (
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-                  : "space-y-4"
-              }
-            >
-              {filteredFolders.map(renderFolder)}
+          {isAddingFolder && (
+            <div className="mb-6 bg-white p-4 rounded-lg shadow">
+              <input
+                type="text"
+                placeholder="New folder name"
+                value={newFolderName}
+                onChange={(e) => setNewFolderName(e.target.value)}
+                className="mr-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleAddFolder}
+                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+              >
+                Create Folder
+              </button>
+              <button
+                onClick={() => setIsAddingFolder(false)}
+                className="ml-2 text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
             </div>
           )}
+
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                : "space-y-4"
+            }
+          >
+            {filteredFolders.map(renderFolder)}
+          </div>
         </div>
       </div>
 
-      {!currentFolder && (
-        <ToggleViewModeButton
-          toggleViewMode={toggleViewMode}
-          viewMode={viewMode}
-        />
-      )}
+      <ToggleViewModeButton
+        toggleViewMode={toggleViewMode}
+        viewMode={viewMode}
+      />
     </div>
   );
 };
