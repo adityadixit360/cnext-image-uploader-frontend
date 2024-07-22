@@ -1,16 +1,26 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import apiClient from "../../redux/apiClient";
-import { FolderIcon } from "@heroicons/react/24/outline";
+import {
+  FolderIcon,
+  PlusIcon,
+  ArrowUpTrayIcon,
+} from "@heroicons/react/24/outline";
 import { FaFile, FaDownload } from "react-icons/fa6";
 import Loader from "../../utils/Loader";
 import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { useParams } from "react-router-dom";
 import Layout from "../Layout";
+import { createFolder, uploadFile } from "../../utils/apis";
 
 const FolderContents = () => {
   const params = useParams();
   const initialFolderId = params.folderName;
-  // console.log(initialFolderId, "initial folder id");
 
   const [folderId, setFolderId] = useState(initialFolderId);
   const [folderItems, setFolderItems] = useState([]);
@@ -24,6 +34,10 @@ const FolderContents = () => {
   const [imagesLoading, setImagesLoading] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
   const [totalImageCount, setTotalImageCount] = useState(0);
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const fetchFolderItems = useCallback(
     async (folderId) => {
@@ -36,7 +50,6 @@ const FolderContents = () => {
           setFolderItems(cache[folderId]);
         } else {
           const res = await apiClient.get(`/list-files/${folderId}/`);
-          console.log(res?.data);
           const { files, folders } = res?.data;
 
           const formattedFiles = files.map((file) => ({
@@ -102,6 +115,42 @@ const FolderContents = () => {
       return newCount;
     });
   }, [totalImageCount]);
+
+  const handleAddFolder = async () => {
+    if (newFolderName.trim()) {
+      try {
+        await createFolder({
+          parent_folder: folderId,
+          folder_name: newFolderName,
+        });
+        fetchFolderItems(folderId); // Refresh the folder list
+        setNewFolderName("");
+        setIsAddingFolder(false);
+      } catch (error) {
+        console.error("Error creating folder:", error);
+        setError("Failed to create folder. Please try again.");
+      }
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setIsUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("folder_id", folderId);
+
+        await uploadFile(formData);
+        fetchFolderItems(folderId);
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        setError("Failed to upload file. Please try again.");
+      }
+      setIsUploading(false);
+    }
+  };
 
   const renderAllItem = useCallback(
     (item) => (
@@ -209,88 +258,117 @@ const FolderContents = () => {
     return <Loader />;
   }
 
-  if (error) {
-    return <div className="text-center text-red-500 p-4">{error}</div>;
-  }
-
   return (
     <Layout>
-      <div className="relative mt-8">
+      <div className="container mx-auto py-4 px-4">
         <Breadcrumb path={path} onNavigate={handleNavigate} />
-
-        <div className="flex mb-4">
-          <button
-            className={`mr-2 px-4 py-2 rounded-lg ${
-              viewType === "all" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setViewType("all")}
-          >
-            All Files and Folders
-          </button>
-          <button
-            className={`mr-2 px-4 py-2 rounded-lg ${
-              viewType === "folders" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setViewType("folders")}
-          >
-            Folders
-          </button>
-          <button
-            className={`px-4 py-2 rounded-lg ${
-              viewType === "files" ? "bg-blue-500 text-white" : "bg-gray-200"
-            }`}
-            onClick={() => setViewType("files")}
-          >
-            Files
-          </button>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Folder: {folderId}
+          </h1>
+          <div className="flex space-x-2">
+            <button
+              className={`px-4 py-2 rounded ${
+                viewType === "all"
+                  ? "bg-gray-800 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+              onClick={() => setViewType("all")}
+            >
+              All
+            </button>
+            <button
+              className={`px-4 py-2 rounded ${
+                viewType === "folders"
+                  ? "bg-gray-800 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+              onClick={() => setViewType("folders")}
+            >
+              Folders
+            </button>
+            <button
+              className={`px-4 py-2 rounded ${
+                viewType === "files"
+                  ? "bg-gray-800 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+              onClick={() => setViewType("files")}
+            >
+              Files
+            </button>
+          </div>
         </div>
 
-        {filteredItems.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-center text-gray-500 mt-4 h-32 w-full bg-gray-100 rounded-lg border border-gray-300">
-            <img
-              src="./images/paper.png"
-              alt="no-item-found"
-              className="h-8 w-8"
-            />
-            <p className="text-lg font-medium">No items found</p>
-            <p className="text-sm text-gray-400">This folder is empty.</p>
+        <div className="flex space-x-4 mb-4">
+          <div
+            className="bg-gray-100 p-4 rounded-lg flex items-center cursor-pointer"
+            onClick={() => setIsAddingFolder(!isAddingFolder)}
+          >
+            <PlusIcon className="h-6 w-6 text-gray-500 mr-2" />
+            <span className="text-gray-700">Add Folder</span>
           </div>
-        ) : (
-          <div className="relative">
-            {imagesLoading && (
-              <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-              </div>
-            )}
-            <div
-              className={
-                viewType === "files"
-                  ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
-                  : "space-y-2"
-              }
+          <div
+            className="bg-gray-100 p-4 rounded-lg flex items-center cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <ArrowUpTrayIcon className="h-6 w-6 text-gray-500 mr-2" />
+            <span className="text-gray-700">Upload File</span>
+          </div>
+        </div>
+
+        {isAddingFolder && (
+          <div className="mb-4">
+            <input
+              type="text"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              className="border border-gray-300 p-2 rounded-lg w-full mb-2"
+              placeholder="Enter folder name"
+            />
+            <button
+              onClick={handleAddFolder}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
             >
-              {viewType === "files" ? (
-                filteredItems.some((item) =>
-                  ["jpg", "jpeg", "png", "gif", "bmp", "webp"].some((ext) =>
-                    item.name.toLowerCase().endsWith(ext)
-                  )
-                ) ? (
-                  filteredItems.map(renderFileGrid)
-                ) : (
-                  <div className="col-span-full flex flex-col items-center justify-center text-center text-gray-500 mt-4 h-32 w-full bg-gray-100 rounded-lg border border-gray-300">
-                    <FaFile className="h-8 w-8 text-gray-400 mb-2" />
-                    <p className="text-lg font-medium">No image files found</p>
-                    <p className="text-sm text-gray-400">
-                      This folder doesn't contain any image files.
-                    </p>
-                  </div>
-                )
-              ) : (
-                filteredItems.map(renderAllItem)
-              )}
-            </div>
+              Add Folder
+            </button>
           </div>
         )}
+
+        {isUploading && (
+          <div className="mb-4 text-blue-600">Uploading file...</div>
+        )}
+
+        {error && <div className="text-red-600 mb-4">{error}</div>}
+
+        {imagesLoading && (
+          <div className="mb-4 text-blue-600">
+            Loading images... ({loadedImageCount}/{totalImageCount})
+          </div>
+        )}
+
+        {folderItems.length === 0 ? (
+          <div className="text-gray-500 text-center mt-4">
+            {viewType === "all"
+              ? "No items in this folder."
+              : viewType === "folders"
+              ? "No folders in this folder."
+              : "No files in this folder."}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredItems.map((item) =>
+              viewType === "files" ? renderFileGrid(item) : renderAllItem(item)
+            )}
+          </div>
+        )}
+
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileUpload}
+        />
       </div>
     </Layout>
   );

@@ -8,6 +8,7 @@ import {
 import apiClient from "../../redux/apiClient";
 import Loader from "../../utils/Loader";
 import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
+import { createFolder } from "../../utils/apis";
 
 const FileExplorer = () => {
   const [folders, setFolders] = useState([]);
@@ -18,6 +19,7 @@ const FileExplorer = () => {
   const [filteredFolders, setFilteredFolders] = useState([]);
   const [newFolderName, setNewFolderName] = useState("");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [currentFolder, setCurrentFolder] = useState("/");
 
   const navigate = useNavigate();
 
@@ -45,6 +47,7 @@ const FileExplorer = () => {
   };
 
   const openFolder = (folder) => {
+    setCurrentFolder(folder.name);
     navigate(`/folder-content/${folder.name}`);
   };
 
@@ -55,9 +58,11 @@ const FileExplorer = () => {
   const handleAddFolder = async () => {
     if (newFolderName.trim()) {
       try {
-        // Replace this with your actual API call to create a new folder
-        await apiClient.post("/create-folder/", { folderName: newFolderName });
-        fetchFolders(); // Refresh the folder list
+        await createFolder({
+          parent_folder: currentFolder,
+          folder_name: newFolderName,
+        });
+        fetchFolders();
         setNewFolderName("");
         setIsAddingFolder(false);
       } catch (error) {
@@ -170,6 +175,18 @@ const FileExplorer = () => {
                 onChange={(e) => setNewFolderName(e.target.value)}
                 className="mr-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              <select
+                value={currentFolder}
+                onChange={(e) => setCurrentFolder(e.target.value)}
+                className="mr-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="/">Root</option>
+                {folders.map((folder) => (
+                  <option key={folder.id} value={folder.name}>
+                    {folder.name}
+                  </option>
+                ))}
+              </select>
               <button
                 onClick={handleAddFolder}
                 className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
