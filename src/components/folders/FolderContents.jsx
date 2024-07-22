@@ -18,6 +18,9 @@ import { useParams } from "react-router-dom";
 import Layout from "../Layout";
 import { createFolder, uploadFile } from "../../utils/apis";
 
+import { FolderOpenIcon, DocumentIcon, InboxIcon } from '@heroicons/react/24/outline';
+
+
 const FolderContents = () => {
   const params = useParams();
   const initialFolderId = params.folderName;
@@ -37,6 +40,7 @@ const FolderContents = () => {
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+
   const fileInputRef = useRef(null);
 
   const fetchFolderItems = useCallback(
@@ -187,7 +191,7 @@ const FolderContents = () => {
       const isImage = imageExtensions.some((ext) =>
         item.name.toLowerCase().endsWith(ext)
       );
-
+  
       if (!isImage) {
         return (
           <div
@@ -208,7 +212,7 @@ const FolderContents = () => {
           </div>
         );
       }
-
+  
       return (
         <div key={item.id} className="relative group">
           <img
@@ -260,12 +264,13 @@ const FolderContents = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto py-4 px-4">
-        <Breadcrumb path={path} onNavigate={handleNavigate} />
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-semibold text-gray-800">
+      <div className="container mx-auto py-4 px-4 mt-8">
+        <div className="flex justify-between items-center mb-4"> 
+          <Breadcrumb path={path} onNavigate={handleNavigate} />
+        
+          {/* <h1 className="text-2xl font-semibold text-gray-800">
             Folder: {folderId}
-          </h1>
+          </h1> */}
           <div className="flex space-x-2">
             <button
               className={`px-4 py-2 rounded ${
@@ -348,12 +353,30 @@ const FolderContents = () => {
         )}
 
         {folderItems.length === 0 ? (
-          <div className="text-gray-500 text-center mt-4">
-            {viewType === "all"
-              ? "No items in this folder."
-              : viewType === "folders"
-              ? "No folders in this folder."
-              : "No files in this folder."}
+          // <div className="text-gray-500 text-center mt-4 ">
+          //   {viewType === "all"
+          //     ? "No items in this folder."
+          //     : viewType === "folders"
+          //     ? "No folders in this folder."
+          //     : "No files in this folder."}
+          // </div>          
+          <div className="text-gray-500 text-center mt-8 flex flex-col items-center space-y-6 animate-fadeIn">
+            <div className="p-4 rounded-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg">
+              {viewType === "all" ? (
+                <InboxIcon className="h-16 w-16 text-white" />
+              ) : viewType === "folders" ? (
+                <FolderOpenIcon className="h-16 w-16 text-white" />
+              ) : (
+                <DocumentIcon className="h-16 w-16 text-white" />
+              )}
+            </div>
+            <p className="text-lg font-semibold">
+              {viewType === "all"
+                ? "No items in this folder."
+                : viewType === "folders"
+                ? "No folders in this folder."
+                : "No files in this folder."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

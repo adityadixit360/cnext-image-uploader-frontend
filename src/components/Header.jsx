@@ -4,13 +4,13 @@ import { UserCircleIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const Header = () => {
   return (
-    <header className="bg-gray-50 text-white p-4 fixed w-full z-10 shadow-lg">
+    <header className="bg-gray-50 text-gray-800 p-4 fixed w-full z-10 shadow-lg">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <h1 className="text-2xl font-bold text-green-500"></h1>
-        <nav className="hidden lg:flex space-x-4 items-center">
-          {/* <Link to="/" className="hover:bg-gray-700 p-2 rounded">
-            Dashboard
-          </Link> */}
+        <nav className="flex space-x-4 items-center">
+          <div className="hidden lg:flex space-x-4">
+            {/* Add other links here if needed */}
+          </div>
           <UserProfileDropdown />
         </nav>
       </div>

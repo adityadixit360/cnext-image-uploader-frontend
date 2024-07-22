@@ -56,8 +56,13 @@ const Sidebar = () => {
         lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
       >
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold">ImageUploader</h2>
+        <div className="flex items-center justify-between mb-8 lg:justify-around">
+          {/* <h2 className="text-2xl font-bold">ImageUploader</h2> */}
+          <img src="https://cdn-icons-png.freepik.com/256/10254/10254379.png?semt=ais_hybrid" alt="app-logo" className="h-10 w-10"></img>
+          <div>
+            <h2 className="text-2xl font-bold">Image</h2>
+            <h2 className="text-2xl font-bold">Uploader</h2> 
+          </div>
           <button className="lg:hidden" onClick={toggleSidebar}>
             <XMarkIcon className="h-6 w-6" />
           </button>
