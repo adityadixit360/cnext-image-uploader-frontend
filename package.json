@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.6",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -18,6 +19,7 @@
     "react-dropzone": "^14.2.3",
     "react-easy-crop": "^5.0.7",
     "react-google-button": "^0.8.0",
+    "react-google-login": "^5.2.2",
     "react-icons": "^5.2.1",
     "react-image-crop": "^11.0.5",
     "react-image-filter": "^0.1.2",
