@@ -3,7 +3,7 @@ import { FolderIcon } from "@heroicons/react/24/outline";
 import { FaFile, FaDownload } from "react-icons/fa6";
 import Loader from "../utils/Loader";
 import { InboxIcon, FolderOpenIcon, DocumentIcon } from '@heroicons/react/24/outline';
-
+import { PhotoIcon } from '@heroicons/react/24/outline';
 
 const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
   if (isLoading) {
@@ -12,13 +12,6 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
 
   if (items.length === 0) {
     return (
-      // <div className="text-gray-500 text-center mt-4">
-      //   {viewType === "all"
-      //     ? "No items in this folder."
-      //     : viewType === "folders"
-      //     ? "No folders in this folder."
-      //     : "No files in this folder."}
-      // </div>
       <div className="text-gray-500 text-center mt-8 flex flex-col items-center space-y-6 animate-fadeIn">
         <div className="p-4 rounded-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg">
           {viewType === "all" ? (
@@ -64,22 +57,32 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
   );
 };
 
-const FolderItem = ({ item, onClick }) => (
-  <div
-    className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2"
-    onClick={() => onClick(item)}
-  >
-    <FolderIcon className="h-6 w-6 flex-shrink-0 text-yellow-500 mr-2" />
-    <span
-      className="text-sm font-medium text-gray-900 truncate flex-grow"
-      title={item.name}
+const FolderItem = ({ item, onClick }) => {
+  const extensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "json", "avif"];
+  const isImage = extensions.includes(item.name.split('.').pop().toLowerCase());
+
+  return (
+    <div
+      className={`bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2 ${isImage ? '' : 'hover:bg-gray-100'}`}
+      onClick={isImage ? null : () => onClick(item)}
+      style={{ cursor: isImage ? 'default' : 'pointer' }}
     >
-      {item.name}
-    </span>
-    <span className="text-sm text-gray-500 mr-4">{item.totalItems} items</span>
-    <span className="text-sm text-gray-500">{item.lastModified}</span>
-  </div>
-);
+      {isImage ? (
+        <PhotoIcon className="h-6 w-6 flex-shrink-0 text-blue-500 mr-2" />
+      ) : (
+        <FolderIcon className="h-6 w-6 flex-shrink-0 text-yellow-500 mr-2" />
+      )}
+      <span
+        className="text-sm font-medium text-gray-900 truncate flex-grow"
+        title={item.name}
+      >
+        {item.name}
+      </span>
+      <span className="text-sm text-gray-500 mr-4">{item.totalItems} items</span>
+      <span className="text-sm text-gray-500">{item.lastModified}</span>
+    </div>
+  );
+};
 
 const FileItem = ({ item }) => {
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp"];

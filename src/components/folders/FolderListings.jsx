@@ -27,11 +27,16 @@ const FileExplorer = () => {
   useEffect(() => {
     fetchFolders();
   }, []);
+  const token=localStorage.getItem('token')
 
   const fetchFolders = async () => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get("/list-folders/");
+      const res = await apiClient.get("/list-folders/",{
+        headers:{
+          "Authorization":token
+        }
+      });
       const formattedFolders = res?.data?.folders.map((folder) => ({
         id: folder.id || Math.random().toString(36).substr(2, 9),
         name: folder.folderName,
@@ -144,14 +149,7 @@ const FileExplorer = () => {
         <div className="px-4 py-6 sm:px-0">
           <div className="flex items-center justify-between mb-6">
             <div className="flex flex-col items-start">
-              <div className="flex flex-col items-center">
-                <h1 className="text-3xl font-bold text-gray-900 truncate">
-                  My
-                </h1>
-                <h1 className="text-3xl font-bold text-gray-900 truncate">
-                  Folders
-                </h1>
-              </div>
+              <h1 className="text-3xl font-bold">My Folders</h1>
             </div>
             <div className="flex items-center">
                <div className="relative mr-4">
@@ -204,7 +202,7 @@ const FileExplorer = () => {
                 </button>
                 <button
                   onClick={() => setIsAddingFolder(false)}
-                  className="ml-4 text-gray-500 hover:text-gray-700"
+                  className="ml-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
                 >
                   Cancel
                 </button>

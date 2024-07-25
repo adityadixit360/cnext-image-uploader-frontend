@@ -15,13 +15,14 @@ const Login = () => {
         );
 
         const response = await axios.post(
-          "http://localhost:8000/api/google-login/",
+          "http://127.0.0.1:8000/api/google-login/",
           {
             token: tokenResponse.access_token,
             email: userInfo.data.email,
             name: userInfo.data.name,
           }
         );
+        console.log(response)
 
         if (response.data.success) {
           console.log(response.data)
