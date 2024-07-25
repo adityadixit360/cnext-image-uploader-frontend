@@ -6,7 +6,6 @@ import GoogleButton from "react-google-button";
 
 const Login = () => {
   const navigate = useNavigate();
-
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {

@@ -6,7 +6,7 @@ import {
   XMarkIcon,
   FolderIcon,
 } from "@heroicons/react/24/outline";
-
+import {FiUploadCloud} from 'react-icons/fi'
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -28,15 +28,14 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile menu button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-md bg-gray-800 text-white"
+        className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-md  text-white"
         onClick={toggleSidebar}
       >
         {isOpen ? (
           <XMarkIcon className="h-6 w-6" />
         ) : (
-          <Bars3Icon className="h-6 w-6" />
+          <Bars3Icon className="h-6 w-6 bg-white text-blue-600 font-semibold text-3xl" />
         )}
       </button>
 
@@ -48,16 +47,18 @@ const Sidebar = () => {
         ></div>
       )}
 
-      {/* Sidebar */}
       <aside
         className={`
         bg-gray-800 text-white w-64 min-h-screen p-4
         fixed left-0 top-0 z-20 transition-transform duration-300 ease-in-out
-        lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        lg:translate-x-0 h-full ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
       >
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold">ImageUploader</h2>
+          <h2 className="text-2xl font-bold flex items-center gap-4">
+          <FiUploadCloud/>
+          <span>Uploader</span>
+          </h2>
           <button className="lg:hidden" onClick={toggleSidebar}>
             <XMarkIcon className="h-6 w-6" />
           </button>

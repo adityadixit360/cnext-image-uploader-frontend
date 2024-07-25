@@ -87,7 +87,7 @@ const FileExplorer = () => {
         <div
           key={folder.id}
           className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
-          onClick={() => openFolder(folder)}
+          onDoubleClick={() => openFolder(folder)}
         >
           <div className="flex items-center">
             <FolderIcon className="h-8 w-8 flex-shrink-0 text-yellow-500 mr-3" />
