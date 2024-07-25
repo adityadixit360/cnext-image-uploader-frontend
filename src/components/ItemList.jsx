@@ -2,6 +2,8 @@ import React from "react";
 import { FolderIcon } from "@heroicons/react/24/outline";
 import { FaFile, FaDownload } from "react-icons/fa6";
 import Loader from "../utils/Loader";
+import { InboxIcon, FolderOpenIcon, DocumentIcon } from '@heroicons/react/24/outline';
+
 
 const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
   if (isLoading) {
@@ -10,12 +12,30 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
 
   if (items.length === 0) {
     return (
-      <div className="text-gray-500 text-center mt-4">
-        {viewType === "all"
-          ? "No items in this folder."
-          : viewType === "folders"
-          ? "No folders in this folder."
-          : "No files in this folder."}
+      // <div className="text-gray-500 text-center mt-4">
+      //   {viewType === "all"
+      //     ? "No items in this folder."
+      //     : viewType === "folders"
+      //     ? "No folders in this folder."
+      //     : "No files in this folder."}
+      // </div>
+      <div className="text-gray-500 text-center mt-8 flex flex-col items-center space-y-6 animate-fadeIn">
+        <div className="p-4 rounded-full bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 shadow-lg">
+          {viewType === "all" ? (
+            <InboxIcon className="h-16 w-16 text-white" />
+          ) : viewType === "folders" ? (
+            <FolderOpenIcon className="h-16 w-16 text-white" />
+          ) : (
+            <DocumentIcon className="h-16 w-16 text-white" />
+          )}
+        </div>
+        <p className="text-lg font-semibold">
+          {viewType === "all"
+            ? "No items in this folder."
+            : viewType === "folders"
+            ? "No folders in this folder."
+            : "No files in this folder."}
+        </p>
       </div>
     );
   }

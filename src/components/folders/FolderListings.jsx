@@ -143,9 +143,16 @@ const FileExplorer = () => {
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 truncate">
-              My Folders
-            </h1>
+            <div className="flex flex-col items-start">
+              <div className="flex flex-col items-center">
+                <h1 className="text-3xl font-bold text-gray-900 truncate">
+                  My
+                </h1>
+                <h1 className="text-3xl font-bold text-gray-900 truncate">
+                  Folders
+                </h1>
+              </div>
+            </div>
             <div className="flex items-center">
                <div className="relative mr-4">
                 <input
@@ -188,18 +195,20 @@ const FileExplorer = () => {
                   </option>
                 ))}
               </select>
-              <button
-                onClick={handleAddFolder}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
-              >
-                Create Folder
-              </button>
-              <button
-                onClick={() => setIsAddingFolder(false)}
-                className="ml-2 text-gray-500 hover:text-gray-700"
-              >
-                Cancel
-              </button>
+              <div className="flex flex-row mt-2">
+                <button
+                  onClick={handleAddFolder}
+                  className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+                >
+                  Create Folder
+                </button>
+                <button
+                  onClick={() => setIsAddingFolder(false)}
+                  className="ml-4 text-gray-500 hover:text-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
             </div>
           )}
 
