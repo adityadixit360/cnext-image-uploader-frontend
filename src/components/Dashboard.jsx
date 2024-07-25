@@ -1,11 +1,11 @@
 import React from "react";
 import Layout from "./Layout";
-import FolderListings from "./folders/FolderListings";
+import AllFolders from "./folders/AllFolders";
 
 const Dashboard = () => {
   return (
     <Layout>
-      <FolderListings />
+      <AllFolders />
     </Layout>
   );
 };

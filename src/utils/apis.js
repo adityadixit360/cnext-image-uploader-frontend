@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const createFolder = async ({ parent_folder, folder_name }) => {
+export const createFolder = async ({ parent_folder, folder_name,token }) => {
 
   const res = await axios.post(
     "http://127.0.0.1:8000/create-folder/",
@@ -11,6 +11,7 @@ export const createFolder = async ({ parent_folder, folder_name }) => {
     {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization":token
       },
     }
   );
