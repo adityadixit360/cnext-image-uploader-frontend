@@ -28,15 +28,14 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* Mobile menu button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-md bg-gray-800 text-white"
+        className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-md  text-white"
         onClick={toggleSidebar}
       >
         {isOpen ? (
           <XMarkIcon className="h-6 w-6" />
         ) : (
-          <Bars3Icon className="h-6 w-6" />
+          <Bars3Icon className="h-6 w-6 bg-white text-blue-600 font-semibold text-3xl" />
         )}
       </button>
 
@@ -48,7 +47,6 @@ const Sidebar = () => {
         ></div>
       )}
 
-      {/* Sidebar */}
       <aside
         className={`
         bg-gray-800 text-white w-64 min-h-screen p-4
