@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FolderIcon,
-  MagnifyingGlassCircleIcon,
+  MagnifyingGlassIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import apiClient from "../../redux/apiClient";
 import Loader from "../../utils/Loader";
 import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
 import { createFolder } from "../../utils/apis";
+import moment from 'moment'
 
 const FileExplorer = () => {
   const [folders, setFolders] = useState([]);
@@ -34,7 +35,7 @@ const FileExplorer = () => {
       const formattedFolders = res?.data?.folders.map((folder) => ({
         id: folder.id || Math.random().toString(36).substr(2, 9),
         name: folder.folderName,
-        lastModified: folder.LastModified,
+        lastModified: moment(folder.LastModified).format("MMMM Do YYYY, h:mm A"),
         totalItems: folder.FileCount + folder.FolderCount,
       }));
       setFolders(formattedFolders);
@@ -59,7 +60,7 @@ const FileExplorer = () => {
     if (newFolderName.trim()) {
       try {
         await createFolder({
-          parent_folder: currentFolder,
+          parent_folder: (currentFolder==='root'||currentFolder==='/')?'':currentFolder,
           folder_name: newFolderName,
         });
         fetchFolders();
@@ -146,15 +147,15 @@ const FileExplorer = () => {
               My Folders
             </h1>
             <div className="flex items-center">
-              <div className="relative mr-4">
+               <div className="relative mr-4">
                 <input
                   type="text"
                   placeholder="Search folders"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="pl-10 pr-4 py-2 w-full sm:w-64 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <MagnifyingGlassCircleIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
               <button
                 onClick={() => setIsAddingFolder(true)}
@@ -180,7 +181,7 @@ const FileExplorer = () => {
                 onChange={(e) => setCurrentFolder(e.target.value)}
                 className="mr-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="/">Root</option>
+                <option value="/">Select Folder</option>
                 {folders.map((folder) => (
                   <option key={folder.id} value={folder.name}>
                     {folder.name}

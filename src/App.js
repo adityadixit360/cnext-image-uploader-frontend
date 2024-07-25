@@ -12,14 +12,14 @@ const App = () => {
       {/* <Sidebar /> */}
       <Routes>
         <Route path="/" element={<Dashboard />} />
-        {/* <Route
+        <Route
           path="/folder-content/:folderName"
           element={<FolderContents />}
-        /> */}
+        />
         <Route
           path="/login"
           element={
-            <GoogleOAuthProvider clientId="214146765583-br28c5tcj6u1gmfbvc64in588l8b54qs.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
               <Login />
             </GoogleOAuthProvider>
           }

@@ -2,6 +2,7 @@ import React from "react";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import GoogleButton from "react-google-button";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,11 +25,9 @@ const Login = () => {
         );
 
         if (response.data.success) {
-          // Save the token and user info in local storage or state if needed
+          console.log(response.data)
           localStorage.setItem("token", tokenResponse.access_token);
           localStorage.setItem("user", JSON.stringify(response.data.user));
-
-          // Redirect to home page
           navigate("/");
         } else {
           console.error("Login failed:", response.data.error);
@@ -40,7 +39,15 @@ const Login = () => {
     onError: (error) => console.error("Google Login Error:", error),
   });
 
-  return <button onClick={() => login()}>Sign in with Google</button>;
+  return (
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md flex items-center space-x-4">
+      <div>
+        <h1 className="text-xl font-medium text-black mb-4">Sign in</h1>
+        <GoogleButton onClick={() => login()} />
+      </div>
+    </div>
+  </div>)
 };
 
 export default Login;
