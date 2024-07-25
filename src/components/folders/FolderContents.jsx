@@ -16,6 +16,7 @@ const FolderContents = () => {
   const [newFolderName, setNewFolderName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
+  
 
   const {
     folderId,

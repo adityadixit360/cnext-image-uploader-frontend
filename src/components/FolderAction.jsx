@@ -74,7 +74,7 @@ const FolderActions = ({
 
 const ActionButton = ({ icon, text, onClick }) => (
   <div
-    className="bg-gray-100 p-4 rounded-lg flex items-center cursor-pointer hover:bg-gray-200 transition-colors"
+    className="bg-gray-100 p-4 rounded-lg flex items-center cursor-pointer hover:bg-gray-200 transition-colors shadow-sm shadow-blue-500"
     onClick={onClick}
   >
     {icon}

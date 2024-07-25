@@ -5,27 +5,25 @@ import FolderContents from "./components/folders/FolderContents";
 import Sidebar from "./components/Sidebar";
 import Login from "./components/auth/Login";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import { config } from "./config";
 
 const App = () => {
+
+
   return (
     <Router>
-      {/* <Sidebar /> */}
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route
-          path="/folder-content/:folderName"
-          element={<FolderContents />}
-        />
-        <Route
-          path="/login"
-          element={
-            <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID}>
-              <Login />
-            </GoogleOAuthProvider>
-          }
-        />
+        <Route path='/' element={<Dashboard/>}/>
+        <Route path='/folder-content/:folderName' element={<FolderContents/>}/>
+        <Route path="/login" element={
+           <GoogleOAuthProvider clientId={`${config.GOOGLE_CLIENT_ID}`}>
+           <Login />
+         </GoogleOAuthProvider>
+        }>
+        </Route>
       </Routes>
     </Router>
+   
   );
 };
 

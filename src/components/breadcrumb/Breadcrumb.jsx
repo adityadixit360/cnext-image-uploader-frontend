@@ -3,7 +3,7 @@ import { ChevronRightIcon } from "@heroicons/react/24/outline";
 
 const Breadcrumb = ({ path, onNavigate }) => {
   return (
-    <div className="flex items-center space-x-2 text-gray-600 mb-4">
+    <div className="flex items-center space-x-2 text-gray-600 mb-4 flex-wrap">
       {path.map((item, index) => (
         <React.Fragment key={item.id}>
           <button
