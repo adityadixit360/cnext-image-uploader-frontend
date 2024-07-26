@@ -9,7 +9,8 @@ import apiClient from "../../redux/apiClient";
 import Loader from "../../utils/Loader";
 import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
 import { createFolder } from "../../utils/apis";
-import moment from 'moment'
+import moment from "moment";
+import AddfolderModal from "../modals/AddfolderModal";
 
 const AllFolders = () => {
   const [folders, setFolders] = useState([]);
@@ -28,21 +29,21 @@ const AllFolders = () => {
     fetchFolders();
   }, []);
 
-  const token=localStorage.getItem('token')
+  const token = localStorage.getItem("token");
   const fetchFolders = async () => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get("/list-folders/",
-    {
-      headers:{
-        "Authorization":token
-      }
-    }
-      );
+      const res = await apiClient.get("/list-folders/", {
+        headers: {
+          Authorization: token,
+        },
+      });
       const formattedFolders = res?.data?.folders.map((folder) => ({
         id: folder.id || Math.random().toString(36).substr(2, 9),
         name: folder.folderName,
-        lastModified: moment(folder.LastModified).format("MMMM Do YYYY, h:mm A"),
+        lastModified: moment(folder.LastModified).format(
+          "MMMM Do YYYY, h:mm A"
+        ),
         totalItems: folder.FileCount + folder.FolderCount,
       }));
       setFolders(formattedFolders);
@@ -67,9 +68,12 @@ const AllFolders = () => {
     if (newFolderName.trim()) {
       try {
         await createFolder({
-          parent_folder: (currentFolder==='root'||currentFolder==='/')?'':currentFolder,
+          parent_folder:
+            currentFolder === "root" || currentFolder === "/"
+              ? ""
+              : currentFolder,
           folder_name: newFolderName,
-          token:localStorage.getItem(token)
+          token: localStorage.getItem("token"),
         });
         fetchFolders();
         setNewFolderName("");
@@ -150,12 +154,12 @@ const AllFolders = () => {
     <div className="bg-gray-100 min-h-screen relative">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 truncate">
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 truncate mb-4 sm:mb-0">
               My Folders
             </h1>
             <div className="flex items-center">
-               <div className="relative mr-4">
+              <div className="relative mr-4">
                 <input
                   type="text"
                   placeholder="Search folders"
@@ -175,42 +179,6 @@ const AllFolders = () => {
             </div>
           </div>
 
-          {isAddingFolder && (
-            <div className="mb-6 bg-white p-4 rounded-lg shadow">
-              <input
-                type="text"
-                placeholder="New folder name"
-                value={newFolderName}
-                onChange={(e) => setNewFolderName(e.target.value)}
-                className="mr-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <select
-                value={currentFolder}
-                onChange={(e) => setCurrentFolder(e.target.value)}
-                className="mr-2 px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="/">Select Folder</option>
-                {folders.map((folder) => (
-                  <option key={folder.id} value={folder.name}>
-                    {folder.name}
-                  </option>
-                ))}
-              </select>
-              <button
-                onClick={handleAddFolder}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
-              >
-                Create Folder
-              </button>
-              <button
-                onClick={() => setIsAddingFolder(false)}
-                className="ml-2 text-gray-500 hover:text-gray-700"
-              >
-                Cancel
-              </button>
-            </div>
-          )}
-
           <div
             className={
               viewMode === "grid"
@@ -222,6 +190,17 @@ const AllFolders = () => {
           </div>
         </div>
       </div>
+
+      <AddfolderModal
+        isOpen={isAddingFolder}
+        onClose={() => setIsAddingFolder(false)}
+        newFolderName={newFolderName}
+        setNewFolderName={setNewFolderName}
+        currentFolder={currentFolder}
+        setCurrentFolder={setCurrentFolder}
+        handleAddFolder={handleAddFolder}
+        folders={folders}
+      />
 
       <ToggleViewModeButton
         toggleViewMode={toggleViewMode}
