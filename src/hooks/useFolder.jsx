@@ -9,6 +9,7 @@ const useFolder = (initialFolderId) => {
   const [imagesLoading, setImagesLoading] = useState(false);
   const [loadedImageCount, setLoadedImageCount] = useState(0);
   const [totalImageCount, setTotalImageCount] = useState(0);
+  const token = localStorage.getItem("token");
 
   const fetchFolderItems = useCallback(
     async (folderId) => {
@@ -20,7 +21,11 @@ const useFolder = (initialFolderId) => {
         if (cache[folderId]) {
           setFolderItems(cache[folderId]);
         } else {
-          const res = await apiClient.get(`/list-files/${folderId}/`);
+          const res = await apiClient.get(`/list-files/${folderId}/`, {
+            headers: {
+              "Authorization": token,
+            },
+          });
           const { files, folders } = res?.data;
 
           const formattedFiles = files.map((file) => ({
