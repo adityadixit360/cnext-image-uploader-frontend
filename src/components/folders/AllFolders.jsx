@@ -8,12 +8,14 @@ import {
 import apiClient from "../../redux/apiClient";
 import Loader from "../../utils/Loader";
 import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
-import { createFolder } from "../../utils/apis";
+import { createFolder, getAllFolders } from "../../utils/apis";
 import moment from "moment";
 import AddfolderModal from "../modals/AddfolderModal";
 import toast from "react-hot-toast";
 import Layout from "../Layout";
 import CommonHeader from "../../utils/CommonHeader";
+import { useDispatch } from "react-redux";
+import { allFoldersData } from "../../redux/slices/contentSlice";
 
 const AllFolders = () => {
   const [folders, setFolders] = useState([]);
@@ -26,20 +28,17 @@ const AllFolders = () => {
   const [currentFolder, setCurrentFolder] = useState("/");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetchFolders();
   }, []);
 
-  const token = localStorage.getItem("token");
   const fetchFolders = async () => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get("/list-folders/", {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const res = await getAllFolders();
+      dispatch(allFoldersData(res));
       const formattedFolders = res?.data?.folders.map((folder) => ({
         id: folder.id || Math.random().toString(36).substr(2, 9),
         name: folder.folderName,

@@ -23,7 +23,7 @@ const useFolder = (initialFolderId) => {
         } else {
           const res = await apiClient.get(`/list-files/${folderId}/`, {
             headers: {
-              "Authorization": token,
+              Authorization: token,
             },
           });
           const { files, folders } = res?.data;
@@ -46,7 +46,7 @@ const useFolder = (initialFolderId) => {
 
           const items = [...formattedFolders, ...formattedFiles];
           setFolderItems(items);
-          setCache((prevCache) => ({ ...prevCache, [folderId]: items }));
+          // setCache((prevCache) => ({ ...prevCache, [folderId]: items }));
 
           const imageCount = formattedFiles.filter((file) =>
             ["jpg", "jpeg", "png", "gif", "bmp", "webp"].some((ext) =>
