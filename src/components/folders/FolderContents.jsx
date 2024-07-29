@@ -1,35 +1,44 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../Layout";
 import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { createFolder, uploadFile } from "../../utils/apis";
-import FolderActions from "../FolderAction";
 import ItemList from "../ItemList";
 import useFolder from "../../hooks/useFolder";
+import { FiX } from "react-icons/fi";
+import toast from "react-hot-toast";
+import Modal from "react-modal";
+import CommonHeader from "../../utils/CommonHeader";
+
+Modal.setAppElement("#root");
 
 const FolderContents = () => {
   const params = useParams();
-  const initialFolderId = params.folderName;
-  const [path, setPath] = useState([
-    { id: initialFolderId, name: initialFolderId },
-  ]);
+  const navigate = useNavigate();
+  const [path, setPath] = useState([]);
   const [viewType, setViewType] = useState("all");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
-  const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
   const token = localStorage.getItem("token");
 
-  const {
-    folderId,
-    setFolderId,
-    folderItems,
-    isLoading,
-    fetchFolderItems,
-    imagesLoading,
-    loadedImageCount,
-    totalImageCount,
-  } = useFolder(initialFolderId);
+  const { folderId, setFolderId, folderItems, isLoading, fetchFolderItems } =
+    useFolder();
+
+  useEffect(() => {
+    const folderPath = params["*"]
+      ? params["*"].split("/").filter(Boolean)
+      : [];
+    setPath(
+      folderPath.map((name, index) => ({
+        id: folderPath.slice(0, index + 1).join("/"),
+        name,
+      }))
+    );
+    setFolderId(folderPath.join("/") || "root");
+  }, [params, setFolderId]);
 
   useEffect(() => {
     if (folderId) {
@@ -39,21 +48,20 @@ const FolderContents = () => {
 
   const handleNavigate = useCallback(
     (id, index) => {
-      setPath((prevPath) => prevPath.slice(0, index + 1));
-      setFolderId(id);
+      const newPath = path.slice(0, index + 1);
+      setPath(newPath);
+      navigate(`/folders/${newPath.map((p) => p.name).join("/")}`);
     },
-    [setFolderId]
+    [navigate, path]
   );
 
   const handleFolderClick = useCallback(
     (folder) => {
-      setPath((prevPath) => [
-        ...prevPath,
-        { id: folder.id, name: folder.name },
-      ]);
-      setFolderId(folder.id);
+      const newPath = [...path, { id: folder.id, name: folder.name }];
+      setPath(newPath);
+      navigate(`/folders/${newPath.map((p) => p.name).join("/")}`);
     },
-    [setFolderId]
+    [navigate, path]
   );
 
   const handleAddFolder = async () => {
@@ -62,58 +70,66 @@ const FolderContents = () => {
         await createFolder({
           parent_folder: folderId,
           folder_name: newFolderName,
+          token: localStorage.getItem("token"),
         });
         fetchFolderItems(folderId);
         setNewFolderName("");
         setIsAddingFolder(false);
+        toast.success("Folder created successfully");
       } catch (error) {
-        console.error("Error creating folder:", error);
-        setError("Failed to create folder. Please try again.");
+        toast.error(error.response.data.error);
       }
     }
   };
 
-  const handleFileUpload = async (file) => {
-    if (file) {
-      setIsUploading(true);
+  const handleFileUpload = async () => {
+    if (selectedFile) {
       try {
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", selectedFile);
         formData.append("folder_id", folderId);
-
         await uploadFile(formData, token);
         fetchFolderItems(folderId);
+        setIsUploadingFile(false);
+        setSelectedFile(null);
+        toast.success("File uploaded successfully");
       } catch (error) {
-        console.error("Error uploading file:", error);
-        setError("Failed to upload file. Please try again.");
+        toast.error(error.response.data.error);
       }
-      setIsUploading(false);
     }
+  };
+
+  const modalStyle = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      padding: "20px",
+      borderRadius: "8px",
+      maxWidth: "400px",
+      width: "100%",
+    },
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
+    },
   };
 
   return (
     <Layout>
-      <div className="container mx-auto py-8 px-4">
+      <CommonHeader
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        showAddFolder={true}
+        showSearch={true}
+        showUploadFile={true}
+        setIsAddingFolder={setIsAddingFolder}
+        setIsUploadingFile={setIsUploadingFile}
+      />
+      <div className="container mx-auto py-8 px-4 mt-20">
         <Breadcrumb path={path} onNavigate={handleNavigate} />
-        <FolderActions
-          viewType={viewType}
-          setViewType={setViewType}
-          isAddingFolder={isAddingFolder}
-          setIsAddingFolder={setIsAddingFolder}
-          newFolderName={newFolderName}
-          setNewFolderName={setNewFolderName}
-          handleAddFolder={handleAddFolder}
-          handleFileUpload={handleFileUpload}
-        />
-        {isUploading && (
-          <div className="mb-4 text-blue-600">Uploading file...</div>
-        )}
-        {error && <div className="text-red-600 mb-4">{error}</div>}
-        {imagesLoading && (
-          <div className="mb-4 text-blue-600">
-            Loading images... ({loadedImageCount}/{totalImageCount})
-          </div>
-        )}
         <ItemList
           items={folderItems}
           viewType={viewType}
@@ -121,6 +137,66 @@ const FolderContents = () => {
           isLoading={isLoading}
         />
       </div>
+
+      {/* Add Folder Modal */}
+      <Modal
+        isOpen={isAddingFolder}
+        onRequestClose={() => setIsAddingFolder(false)}
+        style={modalStyle}
+        contentLabel="Add Folder Modal"
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Add New Folder</h2>
+          <button
+            onClick={() => setIsAddingFolder(false)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <FiX size={24} />
+          </button>
+        </div>
+        <input
+          type="text"
+          value={newFolderName}
+          onChange={(e) => setNewFolderName(e.target.value)}
+          placeholder="Enter folder name"
+          className="w-full p-2 border rounded mb-4"
+        />
+        <button
+          onClick={handleAddFolder}
+          className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
+        >
+          Create Folder
+        </button>
+      </Modal>
+
+      {/* Upload File Modal */}
+      <Modal
+        isOpen={isUploadingFile}
+        onRequestClose={() => setIsUploadingFile(false)}
+        style={modalStyle}
+        contentLabel="Upload File Modal"
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-bold">Upload File</h2>
+          <button
+            onClick={() => setIsUploadingFile(false)}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <FiX size={24} />
+          </button>
+        </div>
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          className="w-full p-2 border rounded mb-4"
+        />
+        <button
+          onClick={handleFileUpload}
+          className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+        >
+          Upload File
+        </button>
+      </Modal>
     </Layout>
   );
 };

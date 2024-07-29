@@ -27,18 +27,17 @@ const Login = () => {
             token: tokenResponse.access_token,
           }
         );
-        dispatch(userDetails(userInfo?.data)); // storing the user info
+        localStorage.setItem("userInfo", JSON.stringify(userInfo.data));
+        dispatch(userDetails(userInfo?.data));
 
         if (response.data.success) {
           toast.success("Logged in successfully");
           localStorage.setItem("token", tokenResponse.access_token);
           localStorage.setItem("user", JSON.stringify(response.data.user));
-          navigate("/");
-        } else {
-          console.error("Login failed:", response.data.error);
+          navigate("/folders");
         }
       } catch (error) {
-        console.error("Error during Google login:", error);
+        toast.error(error?.message);
       } finally {
         setIsLoading(false);
       }

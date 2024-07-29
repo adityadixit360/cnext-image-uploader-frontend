@@ -1,42 +1,68 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Modal from "react-modal";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   HomeIcon,
   Bars3Icon,
   XMarkIcon,
   FolderIcon,
-  UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { FiLogIn, FiLogOut, FiUploadCloud } from "react-icons/fi";
+import { FiLogOut, FiUploadCloud } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutUser } from "../redux/slices/userSlice";
+import { logoutUser, userDetails } from "../redux/slices/userSlice";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   const { folderName } = useParams();
   const token = localStorage.getItem("token");
-  const { user } = useSelector((state) => state.user);
   const toggleSidebar = () => setIsOpen(!isOpen);
-  const navItems = [
-    { name: "Dashboard", path: "/", icon: HomeIcon },
-    ...(folderName
-      ? [
-          {
-            name: folderName,
-            path: `/folder/${folderName}`,
-            icon: FolderIcon,
-          },
-        ]
-      : []),
-  ];
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
+  const [userInfo, setUserInfo] = useState(null);
+  const {user}=useSelector((state)=>state.user);
+  
+  // persisting the state by retrieving the information from local storage
+  useEffect(() => {
+    const UserInfo = localStorage.getItem("userInfo");
+    if (UserInfo) {
+      dispatch(userDetails(JSON.parse(UserInfo)))
+    }
+  }, []);
+
+  
   const handleLogout = () => {
+    setIsModalOpen(true);
+  };
+
+  const confirmLogout = () => {
     dispatch(logoutUser());
     localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    toast.success("Logged out successfully");
     navigate("/login");
+    setIsModalOpen(false);
   };
+
+  const cancelLogout = () => {
+    setIsModalOpen(false);
+  };
+
+  const navItems = [
+    { name: "Dashboard", path: "/", icon: HomeIcon },
+    // ...(folderName
+    //   ? [
+    //       {
+    //         name: folderName,
+    //         path: `/folder/${folderName}`,
+    //         icon: FolderIcon,
+    //       },
+    //     ]
+    //   : []),
+  ];
+
   return (
     <>
       <button
@@ -114,6 +140,32 @@ const Sidebar = () => {
           )}
         </div>
       </aside>
+      <Modal
+        isOpen={isModalOpen}
+        onRequestClose={cancelLogout}
+        contentLabel="Confirm Logout"
+        className="flex items-center justify-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+      >
+        <div className="bg-white p-4 rounded shadow-lg max-w-md mx-auto">
+          <h2 className="text-xl mb-4">Confirm Logout</h2>
+          <p className="mb-4">Are you sure you want to log out?</p>
+          <div className="flex justify-end">
+            <button
+              onClick={cancelLogout}
+              className="mr-2 px-4 py-2 bg-gray-300 rounded"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   );
 };

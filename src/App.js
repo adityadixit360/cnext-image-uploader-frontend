@@ -38,7 +38,7 @@ const App = () => {
           }
         />
         <Route
-          path="/folders/:folderName"
+          path="/folders/*"
           element={
             <PrivateRoute>
               <FolderContents />
