@@ -128,8 +128,32 @@ const FolderContents = () => {
         setIsAddingFolder={setIsAddingFolder}
         setIsUploadingFile={setIsUploadingFile}
       />
-      <div className="container mx-auto py-8 px-4 mt-20">
-        <Breadcrumb path={path} onNavigate={handleNavigate} />
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center  mb-5">
+          <Breadcrumb path={path} onNavigate={handleNavigate} />
+          <div className="flex space-x-4">
+            <button
+              onClick={() => setViewType("all")}
+              className={`px-4 py-2 rounded-md ${
+                viewType === "all"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              All Folders
+            </button>
+            <button
+              onClick={() => setViewType("files")}
+              className={`px-4 py-2 rounded-md ${
+                viewType === "files"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              All Files
+            </button>
+          </div>
+        </div>
         <ItemList
           items={folderItems}
           viewType={viewType}
