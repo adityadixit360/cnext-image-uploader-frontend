@@ -6,6 +6,9 @@ module.exports = {
       animation: {
         fadeIn: 'fadeIn 1s ease-in-out',
       },
+      zIndex: {
+        '100': '100',
+      },
       fontFamily: {
         sans: ['Roboto', 'sans-serif'],
       },

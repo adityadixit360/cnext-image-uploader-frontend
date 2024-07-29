@@ -153,7 +153,6 @@ const AllFolders = () => {
         setIsAddingFolder={setIsAddingFolder}
       />
 
-      {/* Main Content */}
       {isLoading ? <Loader /> : <div className="flex-grow mt-4">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 sm:px-0">
