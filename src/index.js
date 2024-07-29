@@ -6,6 +6,7 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import { ToastContainer } from "react-toastify";
+import { Toaster } from "react-hot-toast";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -13,7 +14,7 @@ root.render(
     <Provider store={store}>
       <App />
     </Provider>
-    <ToastContainer position="top-right" />
+    <Toaster position="bottom-center" />
   </React.StrictMode>
 );
 reportWebVitals();

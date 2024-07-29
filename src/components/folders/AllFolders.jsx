@@ -11,11 +11,13 @@ import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
 import { createFolder } from "../../utils/apis";
 import moment from "moment";
 import AddfolderModal from "../modals/AddfolderModal";
+import toast from "react-hot-toast";
+import Layout from "../Layout";
+import CommonHeader from "../../utils/CommonHeader";
 
 const AllFolders = () => {
   const [folders, setFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredFolders, setFilteredFolders] = useState([]);
@@ -49,8 +51,8 @@ const AllFolders = () => {
       setFolders(formattedFolders);
       setFilteredFolders(formattedFolders);
     } catch (error) {
-      console.error("Error fetching folders:", error);
-      setError("Failed to load folders. Please try again.");
+      toast.error(error.message);
+      navigate("/");
     }
     setIsLoading(false);
   };
@@ -79,8 +81,8 @@ const AllFolders = () => {
         setNewFolderName("");
         setIsAddingFolder(false);
       } catch (error) {
-        console.error("Error creating folder:", error);
-        setError("Failed to create folder. Please try again.");
+        console.log(error);
+        toast.error(error.response.data.error);
       }
     }
   };
@@ -146,47 +148,29 @@ const AllFolders = () => {
     return <Loader />;
   }
 
-  if (error) {
-    return <div className="text-center text-red-500 p-4">{error}</div>;
-  }
-
   return (
-    <div className="bg-gray-100 min-h-screen relative">
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 truncate mb-4 sm:mb-0">
-              My Folders
-            </h1>
-            <div className="flex items-center">
-              <div className="relative mr-4">
-                <input
-                  type="text"
-                  placeholder="Search folders"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-full sm:w-64 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-              </div>
-              <button
-                onClick={() => setIsAddingFolder(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
-              >
-                <PlusIcon className="h-5 w-5 inline-block mr-2" />
-                Add Folder
-              </button>
-            </div>
-          </div>
+    <div className="bg-gray-100 min-h-screen flex flex-col">
+      <CommonHeader
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        showSearch={true}
+        showAddFolder={true}
+        setIsAddingFolder={setIsAddingFolder}
+      />
 
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-                : "space-y-4"
-            }
-          >
-            {filteredFolders.map(renderFolder)}
+      {/* Main Content */}
+      <div className="flex-grow mt-4">
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 sm:px-0">
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                  : "space-y-4"
+              }
+            >
+              {filteredFolders.map(renderFolder)}
+            </div>
           </div>
         </div>
       </div>
