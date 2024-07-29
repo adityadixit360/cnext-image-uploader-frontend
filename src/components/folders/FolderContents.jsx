@@ -128,7 +128,7 @@ const FolderContents = () => {
         setIsAddingFolder={setIsAddingFolder}
         setIsUploadingFile={setIsUploadingFile}
       />
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto py-8 px-4 ">
         <div className="flex justify-between items-center  mb-5">
           <Breadcrumb path={path} onNavigate={handleNavigate} />
           <div className="flex space-x-4">
