@@ -9,10 +9,13 @@ const contentSlice = createSlice({
     allFoldersData: (state, action) => {
       state.folders = action.payload;
     },
+    clearFoldersData: (state, action) => {
+      state.folders = [];
+    },
   },
   //   extraReducers: (builder) => {},
 });
 
-export const { allFoldersData } = contentSlice.actions;
+export const { allFoldersData, clearFoldersData } = contentSlice.actions;
 
 export default contentSlice;

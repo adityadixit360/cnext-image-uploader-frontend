@@ -11,6 +11,7 @@ import { FiLogOut, FiUploadCloud } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, userDetails } from "../redux/slices/userSlice";
 import toast from "react-hot-toast";
+import { clearFoldersData } from "../redux/slices/contentSlice";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,25 +21,25 @@ const Sidebar = () => {
   const token = localStorage.getItem("token");
   const toggleSidebar = () => setIsOpen(!isOpen);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState(null);
-  const {user}=useSelector((state)=>state.user);
-  
+  const { user } = useSelector((state) => state.user);
+
   // persisting the state by retrieving the information from local storage
   useEffect(() => {
     const UserInfo = localStorage.getItem("userInfo");
     if (UserInfo) {
-      dispatch(userDetails(JSON.parse(UserInfo)))
+      dispatch(userDetails(JSON.parse(UserInfo)));
     }
   }, []);
 
-  
   const handleLogout = () => {
     setIsModalOpen(true);
   };
 
   const confirmLogout = () => {
     dispatch(logoutUser());
+    dispatch(clearFoldersData());
     localStorage.removeItem("token");
     localStorage.removeItem("userInfo");
     toast.success("Logged out successfully");
