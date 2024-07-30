@@ -66,7 +66,7 @@ const Sidebar = () => {
   return (
     <>
       <button
-        className="lg:hidden fixed top-4 left-4 p-2 rounded-md text-white z-100"
+        className={`lg:hidden fixed top-4 left-4 p-2 rounded-md text-white ${isOpen?'z-0':'z-100'}`}
         onClick={toggleSidebar}
       >
         {isOpen ? (
