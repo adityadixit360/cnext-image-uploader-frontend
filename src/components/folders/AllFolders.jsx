@@ -336,10 +336,6 @@ const AllFolders = () => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <CommonHeader
@@ -350,8 +346,7 @@ const AllFolders = () => {
         setIsAddingFolder={setIsAddingFolder}
       />
 
-      {/* Main Content */}
-      <div className="flex-grow mt-4">
+      {isLoading ? <Loader /> : <div className="flex-grow mt-4">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 sm:px-0">
             <div
@@ -365,7 +360,7 @@ const AllFolders = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
 
       <AddfolderModal
         isOpen={isAddingFolder}
