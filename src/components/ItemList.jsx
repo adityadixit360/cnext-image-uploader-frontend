@@ -62,6 +62,7 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading,isUploadingFile,is
   );
 };
 
+
 const FolderItem = ({ item, onClick }) => {
   const extensions = [
     "jpg",
@@ -102,7 +103,9 @@ const FolderItem = ({ item, onClick }) => {
   );
 };
 
-const Shimmer = () => <div className="shimmer w-full h-48 rounded-lg"></div>;
+const Shimmer = () => (
+  <div className="shimmer w-full h-48 rounded-lg"></div>
+);
 
 const FileItem = ({ item,isUploadingFile,isAddingFolder }) => {
   const [loaded, setLoaded] = useState(false);

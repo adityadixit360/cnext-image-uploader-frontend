@@ -5,7 +5,7 @@ import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { createFolder, uploadFile } from "../../utils/apis";
 import ItemList from "../ItemList";
 import useFolder from "../../hooks/useFolder";
-import { FiX } from "react-icons/fi";
+import { FiX, FiUploadCloud } from "react-icons/fi";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
 import CommonHeader from "../../utils/CommonHeader";
@@ -114,6 +114,19 @@ const FolderContents = () => {
     }
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      setSelectedFile(files[0]);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedFile(null); 
+    setIsUploadingFile(false);
+  };
+
   const modalStyle = {
     content: {
       top: "50%",
@@ -122,7 +135,25 @@ const FolderContents = () => {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      padding: "20px",
+      padding: '20px',
+      borderRadius: "8px",
+      maxWidth: "400px",
+      width: "100%",
+    },
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
+    },
+  };
+
+  const modalStyle2 = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      padding: 0,
       borderRadius: "8px",
       maxWidth: "400px",
       width: "100%",
@@ -211,21 +242,23 @@ const FolderContents = () => {
           }
         </button>
       </Modal>
+      
 
       {/* Upload File Modal */}
       <Modal
-        isOpen={isUploadingFile}
-        onRequestClose={() => setIsUploadingFile(false)}
-        style={modalStyle}
-        contentLabel="Upload File Modal"
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Upload File</h2>
+      isOpen={isUploadingFile}
+      onRequestClose={closeModal}
+      style={modalStyle2}
+      contentLabel="Upload File Modal"
+    >
+      <div className="flex flex-col bg-white rounded-lg shadow-lg m-0">
+        <div>
+          <h2 className="text-lg font-semibold"></h2>
           <button
-            onClick={() => setIsUploadingFile(false)}
-            className="text-gray-500 hover:text-gray-700"
+            onClick={closeModal}
+            className="text-white hover:text-gray-200 transition-colors"
           >
-            <FiX size={24} />
+            <FiX size={20} />
           </button>
         </div>
         <input
@@ -241,6 +274,7 @@ const FolderContents = () => {
             loading?"Uploading File":"Upload File"
           }
         </button>
+        </div>
       </Modal>
     </Layout>
   );
