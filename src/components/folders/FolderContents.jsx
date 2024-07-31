@@ -30,7 +30,7 @@ const FolderContents = () => {
 
   const { folderId, setFolderId, folderItems, isLoading, fetchFolderItems } =
     useFolder();
-
+  //split the path on the the basis of / and store it into array
   useEffect(() => {
     const folderPath = params["*"]
       ? params["*"].split("/").filter(Boolean)
@@ -50,6 +50,7 @@ const FolderContents = () => {
     }
   }, [folderId, fetchFolderItems]);
 
+  // recreated when navigate or path changes
   const handleNavigate = useCallback(
     (id, index) => {
       const newPath = path.slice(0, index + 1);
