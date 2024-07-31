@@ -10,9 +10,7 @@ import {
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 
-
-const ItemList = ({ items, viewType, onFolderClick, isLoading, isUploadingFile }) => {
-
+const ItemList = ({ items, viewType, onFolderClick, isLoading,isUploadingFile,isUploadingFolder }) => {
   if (isLoading) {
     return <Loader />;
   }
@@ -55,9 +53,9 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading, isUploadingFile }
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {filteredItems.map((item) =>
         viewType === "files" ? (
-          <FileItem key={item.id} item={item} isUploadingFile={isUploadingFile}/>
+          <FileItem key={item.id} item={item} isUploadingFile={isUploadingFile} isAddingFolder={isUploadingFolder} />
         ) : (
-          <FolderItem key={item.id} item={item} onClick={onFolderClick} />
+          <FolderItem key={item.id} item={item} onClick={onFolderClick}/>
         )
       )}
     </div>
@@ -109,7 +107,7 @@ const Shimmer = () => (
   <div className="shimmer w-full h-48 rounded-lg"></div>
 );
 
-const FileItem = ({ item, isUploadingFile }) => {
+const FileItem = ({ item,isUploadingFile,isAddingFolder }) => {
   const [loaded, setLoaded] = useState(false);
   const [showShimmer, setShowShimmer] = useState(true);
   const imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "avif"];
@@ -123,6 +121,9 @@ const FileItem = ({ item, isUploadingFile }) => {
       return () => clearTimeout(timer);
     }
   }, [loaded]);
+
+
+  console.log(isAddingFolder,'isadding folder')
 
   return (
     <div className="relative group bg-gray-200 rounded-lg overflow-hidden">
@@ -143,13 +144,13 @@ const FileItem = ({ item, isUploadingFile }) => {
           <FaFile className="text-gray-400 h-12 w-12" />
         </div>
       )}
-      <div className={`absolute inset-0 bg-black bg-opacity-50 opacity-0 ${isUploadingFile?'group-hover:opacity-0':'group-hover:opacity-100'} transition-opacity rounded-lg flex items-center justify-center z-10`}>
+      <div className={`absolute inset-0 bg-black bg-opacity-50 opacity-0 ${(!isUploadingFile && !isAddingFolder) && "group-hover:opacity-100 transition-opacity"} rounded-lg flex items-center justify-center z-10`}>
         <span className="text-white text-sm font-medium">{item.name}</span>
       </div>
       <a
         href={item.url}
         download
-        className={`absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md opacity-0 ${isUploadingFile?'group-hover:opacity-0':'group-hover:opacity-100'} transition-opacity z-10`}
+        className={`absolute bottom-2 right-2 bg-white rounded-full p-2 shadow-md opacity-0 ${(!isUploadingFile && !isAddingFolder) &&"group-hover:opacity-100 transition-opacity z-10"}  `}
       >
         <FaDownload className="text-gray-600" />
       </a>
