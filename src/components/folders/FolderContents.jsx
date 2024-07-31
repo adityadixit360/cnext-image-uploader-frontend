@@ -5,10 +5,12 @@ import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { createFolder, uploadFile } from "../../utils/apis";
 import ItemList from "../ItemList";
 import useFolder from "../../hooks/useFolder";
-import { FiX } from "react-icons/fi";
+import { FiX, FiUploadCloud } from "react-icons/fi";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
 import CommonHeader from "../../utils/CommonHeader";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoading, showLoading } from "../../redux/slices/loadingSlice";
 
 Modal.setAppElement("#root");
 
@@ -23,10 +25,12 @@ const FolderContents = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const token = localStorage.getItem("token");
+  const dispatch=useDispatch();
+  const {loading}=useSelector(state=>state.loading)
 
   const { folderId, setFolderId, folderItems, isLoading, fetchFolderItems } =
     useFolder();
-
+  //split the path on the the basis of / and store it into array
   useEffect(() => {
     const folderPath = params["*"]
       ? params["*"].split("/").filter(Boolean)
@@ -46,6 +50,7 @@ const FolderContents = () => {
     }
   }, [folderId, fetchFolderItems]);
 
+  // recreated when navigate or path changes
   const handleNavigate = useCallback(
     (id, index) => {
       const newPath = path.slice(0, index + 1);
@@ -66,6 +71,7 @@ const FolderContents = () => {
 
   const handleAddFolder = async () => {
     if (newFolderName.trim()) {
+      dispatch(showLoading())
       try {
         await createFolder({
           parent_folder: folderId,
@@ -76,14 +82,18 @@ const FolderContents = () => {
         setNewFolderName("");
         setIsAddingFolder(false);
         toast.success("Folder created successfully");
+        dispatch(hideLoading(false));
       } catch (error) {
         toast.error(error.response.data.error);
+      }finally{
+        dispatch(hideLoading())
       }
     }
   };
 
   const handleFileUpload = async () => {
     if (selectedFile) {
+      dispatch(showLoading())
       try {
         const formData = new FormData();
         formData.append("file", selectedFile);
@@ -93,10 +103,28 @@ const FolderContents = () => {
         setIsUploadingFile(false);
         setSelectedFile(null);
         toast.success("File uploaded successfully");
+        dispatch(hideLoading())
       } catch (error) {
         toast.error(error.response.data.error);
+        setSelectedFile(null)
+      }
+      finally{
+        dispatch(hideLoading())
       }
     }
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      setSelectedFile(files[0]);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedFile(null); 
+    setIsUploadingFile(false);
   };
 
   const modalStyle = {
@@ -107,7 +135,25 @@ const FolderContents = () => {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      padding: "20px",
+      padding: '20px',
+      borderRadius: "8px",
+      maxWidth: "400px",
+      width: "100%",
+    },
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
+    },
+  };
+
+  const modalStyle2 = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      padding: 0,
       borderRadius: "8px",
       maxWidth: "400px",
       width: "100%",
@@ -128,13 +174,39 @@ const FolderContents = () => {
         setIsAddingFolder={setIsAddingFolder}
         setIsUploadingFile={setIsUploadingFile}
       />
-      <div className="container mx-auto py-8 px-4 mt-20">
-        <Breadcrumb path={path} onNavigate={handleNavigate} />
+      <div className="container mx-auto py-8 px-4">
+        <div className="flex justify-between items-center mb-5 mt-12 lg:mt-0 md:mt-0">
+          <Breadcrumb path={path} onNavigate={handleNavigate} />
+          <div className="flex space-x-4">
+            <button
+              onClick={() => setViewType("all")}
+              className={`px-4 py-2 rounded-md ${
+                viewType === "all"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              All Folders
+            </button>
+            <button
+              onClick={() => setViewType("files")}
+              className={`px-4 py-2 rounded-md ${
+                viewType === "files"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              All Files
+            </button>
+          </div>
+        </div>
         <ItemList
           items={folderItems}
           viewType={viewType}
           onFolderClick={handleFolderClick}
           isLoading={isLoading}
+          isUploadingFile={isUploadingFile}
+          isUploadingFolder={isAddingFolder}
         />
       </div>
 
@@ -165,24 +237,28 @@ const FolderContents = () => {
           onClick={handleAddFolder}
           className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
         >
-          Create Folder
+          {
+            loading?"Creating folder":"Create Folder"
+          }
         </button>
       </Modal>
+      
 
       {/* Upload File Modal */}
       <Modal
-        isOpen={isUploadingFile}
-        onRequestClose={() => setIsUploadingFile(false)}
-        style={modalStyle}
-        contentLabel="Upload File Modal"
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Upload File</h2>
+      isOpen={isUploadingFile}
+      onRequestClose={closeModal}
+      style={modalStyle2}
+      contentLabel="Upload File Modal"
+    >
+      <div className="flex flex-col bg-white rounded-lg shadow-lg m-0">
+        <div>
+          <h2 className="text-lg font-semibold"></h2>
           <button
-            onClick={() => setIsUploadingFile(false)}
-            className="text-gray-500 hover:text-gray-700"
+            onClick={closeModal}
+            className="text-white hover:text-gray-200 transition-colors"
           >
-            <FiX size={24} />
+            <FiX size={20} />
           </button>
         </div>
         <input
@@ -194,8 +270,11 @@ const FolderContents = () => {
           onClick={handleFileUpload}
           className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
         >
-          Upload File
+          {
+            loading?"Uploading File":"Upload File"
+          }
         </button>
+        </div>
       </Modal>
     </Layout>
   );

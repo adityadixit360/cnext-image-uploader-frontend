@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FolderIcon,
-  MagnifyingGlassIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
-import apiClient from "../../redux/apiClient";
+import { FolderIcon } from "@heroicons/react/24/outline";
 import Loader from "../../utils/Loader";
 import ToggleViewModeButton from "../../utils/ToggleViewModeButton";
-import { createFolder } from "../../utils/apis";
+import { createFolder, getAllFolders } from "../../utils/apis";
 import moment from "moment";
 import AddfolderModal from "../modals/AddfolderModal";
 import toast from "react-hot-toast";
-import Layout from "../Layout";
 import CommonHeader from "../../utils/CommonHeader";
+import { useDispatch, useSelector } from "react-redux";
+import { allFoldersData } from "../../redux/slices/contentSlice";
+import { hideLoading, showLoading } from "../../redux/slices/loadingSlice";
 
 const AllFolders = () => {
-  const [folders, setFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [viewMode, setViewMode] = useState("grid");
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,23 +20,28 @@ const AllFolders = () => {
   const [newFolderName, setNewFolderName] = useState("");
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [currentFolder, setCurrentFolder] = useState("/");
+  const [data, setData] = useState([]);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { folders } = useSelector((state) => state.content);
+  const {loading}=useSelector((state)=>state.loading)
 
   useEffect(() => {
     fetchFolders();
   }, []);
 
-  const token = localStorage.getItem("token");
   const fetchFolders = async () => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get("/list-folders/", {
-        headers: {
-          Authorization: token,
-        },
-      });
-      const formattedFolders = res?.data?.folders.map((folder) => ({
+      const res = await getAllFolders();
+      if (res.status === 304) {
+        // if status is not changed then dont make any api call
+        setIsLoading(false);
+        return;
+      }
+      dispatch(allFoldersData(res?.data?.folders));
+      const formattedFolders = res?.data?.folders?.map((folder) => ({
         id: folder.id || Math.random().toString(36).substr(2, 9),
         name: folder.folderName,
         lastModified: moment(folder.LastModified).format(
@@ -48,7 +49,7 @@ const AllFolders = () => {
         ),
         totalItems: folder.FileCount + folder.FolderCount,
       }));
-      setFolders(formattedFolders);
+      setData(formattedFolders);
       setFilteredFolders(formattedFolders);
     } catch (error) {
       toast.error(error.message);
@@ -68,6 +69,7 @@ const AllFolders = () => {
 
   const handleAddFolder = async () => {
     if (newFolderName.trim()) {
+      dispatch(showLoading());
       try {
         await createFolder({
           parent_folder:
@@ -80,20 +82,23 @@ const AllFolders = () => {
         fetchFolders();
         setNewFolderName("");
         setIsAddingFolder(false);
+        dispatch(hideLoading())
       } catch (error) {
-        console.log(error);
-        toast.error(error.response.data.error);
+        toast.error(error?.response?.data?.error||"Error in uploading file");
+      }
+      finally{
+        dispatch(hideLoading());
       }
     }
   };
 
   useEffect(() => {
     setFilteredFolders(
-      folders.filter((folder) =>
-        folder.name.toLowerCase().includes(searchTerm.toLowerCase())
+      data?.filter((folder) =>
+        folder?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase())
       )
     );
-  }, [searchTerm, folders]);
+  }, [searchTerm, data]);
 
   const renderFolder = (folder) => {
     if (viewMode === "grid") {
@@ -144,10 +149,6 @@ const AllFolders = () => {
     }
   };
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col">
       <CommonHeader
@@ -158,8 +159,7 @@ const AllFolders = () => {
         setIsAddingFolder={setIsAddingFolder}
       />
 
-      {/* Main Content */}
-      <div className="flex-grow mt-4">
+      {isLoading ? <Loader /> : <div className="flex-grow mt-4">
         <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 sm:px-0">
             <div
@@ -173,7 +173,7 @@ const AllFolders = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>}
 
       <AddfolderModal
         isOpen={isAddingFolder}
@@ -183,7 +183,9 @@ const AllFolders = () => {
         currentFolder={currentFolder}
         setCurrentFolder={setCurrentFolder}
         handleAddFolder={handleAddFolder}
-        folders={folders}
+        // folders={folders}
+        folders={data}
+        loadingState={loading}
       />
 
       <ToggleViewModeButton

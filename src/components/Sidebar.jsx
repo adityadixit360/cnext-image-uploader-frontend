@@ -11,6 +11,7 @@ import { FiLogOut, FiUploadCloud } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, userDetails } from "../redux/slices/userSlice";
 import toast from "react-hot-toast";
+import { clearFoldersData } from "../redux/slices/contentSlice";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,25 +21,25 @@ const Sidebar = () => {
   const token = localStorage.getItem("token");
   const toggleSidebar = () => setIsOpen(!isOpen);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [userInfo, setUserInfo] = useState(null);
-  const {user}=useSelector((state)=>state.user);
-  
+  const { user } = useSelector((state) => state.user);
+
   // persisting the state by retrieving the information from local storage
   useEffect(() => {
     const UserInfo = localStorage.getItem("userInfo");
     if (UserInfo) {
-      dispatch(userDetails(JSON.parse(UserInfo)))
+      dispatch(userDetails(JSON.parse(UserInfo)));
     }
   }, []);
 
-  
   const handleLogout = () => {
     setIsModalOpen(true);
   };
 
   const confirmLogout = () => {
     dispatch(logoutUser());
+    dispatch(clearFoldersData());
     localStorage.removeItem("token");
     localStorage.removeItem("userInfo");
     toast.success("Logged out successfully");
@@ -66,7 +67,7 @@ const Sidebar = () => {
   return (
     <>
       <button
-        className="lg:hidden fixed top-4 left-4 z-20 p-2 rounded-md text-white"
+        className={`lg:hidden fixed top-4 left-4 p-2 rounded-md text-white ${isOpen?'z-0':'z-100'}`}
         onClick={toggleSidebar}
       >
         {isOpen ? (
@@ -87,7 +88,7 @@ const Sidebar = () => {
       <aside
         className={`
         bg-gray-800 text-white w-64 min-h-screen p-4
-        fixed left-0 top-0 z-20 transition-transform duration-300 ease-in-out
+        fixed left-0 top-0 z-50 transition-transform duration-300 ease-in-out
         lg:translate-x-0 h-full flex flex-col ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }
