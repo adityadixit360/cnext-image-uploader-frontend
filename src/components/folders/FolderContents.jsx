@@ -106,7 +106,7 @@ const FolderContents = () => {
         dispatch(hideLoading())
       } catch (error) {
         toast.error(error.response.data.error);
-        dispatch(hideLoading())
+        setSelectedFile(null)
       }
       finally{
         dispatch(hideLoading())
@@ -174,6 +174,8 @@ const FolderContents = () => {
           viewType={viewType}
           onFolderClick={handleFolderClick}
           isLoading={isLoading}
+          isUploadingFile={isUploadingFile}
+          isUploadingFolder={isAddingFolder}
         />
       </div>
 
