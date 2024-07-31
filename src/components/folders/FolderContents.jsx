@@ -9,6 +9,8 @@ import { FiX } from "react-icons/fi";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
 import CommonHeader from "../../utils/CommonHeader";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoading, showLoading } from "../../redux/slices/loadingSlice";
 
 Modal.setAppElement("#root");
 
@@ -23,6 +25,8 @@ const FolderContents = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const token = localStorage.getItem("token");
+  const dispatch=useDispatch();
+  const {loading}=useSelector(state=>state.loading)
 
   const { folderId, setFolderId, folderItems, isLoading, fetchFolderItems } =
     useFolder();
@@ -66,6 +70,7 @@ const FolderContents = () => {
 
   const handleAddFolder = async () => {
     if (newFolderName.trim()) {
+      dispatch(showLoading())
       try {
         await createFolder({
           parent_folder: folderId,
@@ -76,14 +81,18 @@ const FolderContents = () => {
         setNewFolderName("");
         setIsAddingFolder(false);
         toast.success("Folder created successfully");
+        dispatch(hideLoading(false));
       } catch (error) {
         toast.error(error.response.data.error);
+      }finally{
+        dispatch(hideLoading())
       }
     }
   };
 
   const handleFileUpload = async () => {
     if (selectedFile) {
+      dispatch(showLoading())
       try {
         const formData = new FormData();
         formData.append("file", selectedFile);
@@ -93,8 +102,13 @@ const FolderContents = () => {
         setIsUploadingFile(false);
         setSelectedFile(null);
         toast.success("File uploaded successfully");
+        dispatch(hideLoading())
       } catch (error) {
         toast.error(error.response.data.error);
+        dispatch(hideLoading())
+      }
+      finally{
+        dispatch(hideLoading())
       }
     }
   };
@@ -189,7 +203,9 @@ const FolderContents = () => {
           onClick={handleAddFolder}
           className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
         >
-          Create Folder
+          {
+            loading?"Creating folder":"Create Folder"
+          }
         </button>
       </Modal>
 
@@ -218,7 +234,9 @@ const FolderContents = () => {
           onClick={handleFileUpload}
           className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
         >
-          Upload File
+          {
+            loading?"Uploading File":"Upload File"
+          }
         </button>
       </Modal>
     </Layout>

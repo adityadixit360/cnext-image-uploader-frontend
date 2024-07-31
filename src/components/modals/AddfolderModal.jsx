@@ -9,6 +9,7 @@ const AddfolderModal = ({
   setCurrentFolder,
   handleAddFolder,
   folders,
+  loadingState
 }) => {
   if (!isOpen) return null;
 
@@ -46,7 +47,9 @@ const AddfolderModal = ({
             onClick={handleAddFolder}
             className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
           >
-            Create Folder
+            {
+              loadingState?"Createing Folder":"Create Folder"
+            }
           </button>
         </div>
       </div>
