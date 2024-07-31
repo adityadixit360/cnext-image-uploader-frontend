@@ -14,6 +14,10 @@ const AddFolderModal = ({
   const modalRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const handleClick = () => {
+    setDropdownOpen(false);
+  }
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -55,6 +59,7 @@ const AddFolderModal = ({
           value={newFolderName}
           onChange={(e) => setNewFolderName(e.target.value)}
           className="mb-4 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
+          onClick={handleClick}
         />
         <div className="relative mb-6">
           <button
@@ -101,7 +106,7 @@ const AddFolderModal = ({
             className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
             {
-              loadingState?"Createing Folder":"Create Folder"
+              loadingState?"Creating Folder":"Create Folder"
             }
           </button>
         </div>

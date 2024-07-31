@@ -11,6 +11,19 @@ const CommonHeader = ({
   showAddFolder = false,
   showUploadFile = false,
 }) => {
+
+  const handleAddFolderClick = () => {
+    setIsAddingFolder(true);
+    if (showUploadFile) {
+      setIsUploadingFile(false);
+    }
+  };
+
+  const handleUploadFileClick = () => {
+    setIsUploadingFile(true);
+    setIsAddingFolder(false); 
+  };
+
   return (
     <div className="bg-white shadow-md fixed top-0 left-0 right-0 z-40 lg:ml-64">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -30,7 +43,7 @@ const CommonHeader = ({
           <div className="flex items-center w-full sm:w-auto space-x-2 sm:ml-auto justify-center sm:justify-end lg:ml-0">
             {showAddFolder && (
               <button
-                onClick={() => setIsAddingFolder(true)}
+                onClick={handleAddFolderClick}
                 className="bg-white text-black px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white whitespace-nowrap flex items-center border border-blue-500 transition-all duration-300 ease-in-out"
               >
                 <FiFolder className="mr-2" />
@@ -39,7 +52,7 @@ const CommonHeader = ({
             )}
             {showUploadFile && (
               <button
-                onClick={() => setIsUploadingFile(true)}
+                onClick={handleUploadFileClick}
                 className="bg-white text-black px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white whitespace-nowrap flex items-center border border-blue-500 transition-all duration-300 ease-in-out"
               >
                 <FiUpload className="mr-2" />
