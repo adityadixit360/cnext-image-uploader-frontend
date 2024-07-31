@@ -9,6 +9,7 @@ const AddFolderModal = ({
   setCurrentFolder,
   handleAddFolder,
   folders,
+  loadingState
 }) => {
   const modalRef = useRef(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -99,7 +100,9 @@ const AddFolderModal = ({
             onClick={handleAddFolder}
             className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
-            Create Folder
+            {
+              loadingState?"Createing Folder":"Create Folder"
+            }
           </button>
         </div>
       </div>

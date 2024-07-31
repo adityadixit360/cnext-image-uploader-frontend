@@ -9,6 +9,8 @@ import { FiX, FiUploadCloud } from "react-icons/fi";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
 import CommonHeader from "../../utils/CommonHeader";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoading, showLoading } from "../../redux/slices/loadingSlice";
 
 Modal.setAppElement("#root");
 
@@ -23,10 +25,12 @@ const FolderContents = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const token = localStorage.getItem("token");
+  const dispatch=useDispatch();
+  const {loading}=useSelector(state=>state.loading)
 
   const { folderId, setFolderId, folderItems, isLoading, fetchFolderItems } =
     useFolder();
-
+  //split the path on the the basis of / and store it into array
   useEffect(() => {
     const folderPath = params["*"]
       ? params["*"].split("/").filter(Boolean)
@@ -46,6 +50,7 @@ const FolderContents = () => {
     }
   }, [folderId, fetchFolderItems]);
 
+  // recreated when navigate or path changes
   const handleNavigate = useCallback(
     (id, index) => {
       const newPath = path.slice(0, index + 1);
@@ -66,6 +71,7 @@ const FolderContents = () => {
 
   const handleAddFolder = async () => {
     if (newFolderName.trim()) {
+      dispatch(showLoading())
       try {
         await createFolder({
           parent_folder: folderId,
@@ -76,14 +82,18 @@ const FolderContents = () => {
         setNewFolderName("");
         setIsAddingFolder(false);
         toast.success("Folder created successfully");
+        dispatch(hideLoading(false));
       } catch (error) {
         toast.error(error.response.data.error);
+      }finally{
+        dispatch(hideLoading())
       }
     }
   };
 
   const handleFileUpload = async () => {
     if (selectedFile) {
+      dispatch(showLoading())
       try {
         const formData = new FormData();
         formData.append("file", selectedFile);
@@ -93,8 +103,13 @@ const FolderContents = () => {
         setIsUploadingFile(false);
         setSelectedFile(null);
         toast.success("File uploaded successfully");
+        dispatch(hideLoading())
       } catch (error) {
         toast.error(error.response.data.error);
+        dispatch(hideLoading())
+      }
+      finally{
+        dispatch(hideLoading())
       }
     }
   };
@@ -220,7 +235,9 @@ const FolderContents = () => {
           onClick={handleAddFolder}
           className="w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors"
         >
-          Create Folder
+          {
+            loading?"Creating folder":"Create Folder"
+          }
         </button>
       </Modal>
       
@@ -242,44 +259,21 @@ const FolderContents = () => {
             <FiX size={20} />
           </button>
         </div>
-        <div
-          className="flex flex-col items-center justify-center p-4 bg-white border-dotted border-4 border-purple-300 rounded-2xl mx-4 mt-0"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={handleDrop}
+        <input
+          type="file"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+          className="w-full p-2 border rounded mb-4"
+        />
+        <button
+          onClick={handleFileUpload}
+          className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
         >
-          <FiUploadCloud size={48} className="text-gray-400 mb-2" />
-          <p className="text-gray-600 mb-1 text-sm text-center">Drag and drop your file here</p>
-          <p className="text-gray-400 mb-2 text-xs text-center">or</p>
-          <label className="cursor-pointer text-orange-600 hover:underline text-xs mb-2 text-center">
-            <input
-              type="file"
-              onChange={(e) => setSelectedFile(e.target.files[0])}
-              className="hidden"
-            />
-            Browse files
-          </label>
-          <div className="text-center mt-2">
-            {selectedFile ? (
-              <p className="text-gray-700 text-xs">Selected file: {selectedFile.name}</p>
-            ) : (
-              <p className="text-gray-500 text-xs">No file selected</p>
-            )}
-          </div>
+          {
+            loading?"Uploading File":"Upload File"
+          }
+        </button>
         </div>
-        <div className="p-3 bg-white flex justify-center">
-          <button
-            onClick={handleFileUpload}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              selectedFile ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-gray-400 text-gray-700 cursor-not-allowed'
-            }`}
-            disabled={!selectedFile}
-          >
-            Upload File
-          </button>
-        </div>
-      </div>
-    </Modal>
-
+      </Modal>
     </Layout>
   );
 };

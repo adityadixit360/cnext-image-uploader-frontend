@@ -2,8 +2,12 @@ import React from "react";
 import { FolderIcon } from "@heroicons/react/24/outline";
 import { FaFile, FaDownload } from "react-icons/fa6";
 import Loader from "../utils/Loader";
-import { InboxIcon, FolderOpenIcon, DocumentIcon } from '@heroicons/react/24/outline';
-import { PhotoIcon } from '@heroicons/react/24/outline';
+import {
+  InboxIcon,
+  FolderOpenIcon,
+  DocumentIcon,
+} from "@heroicons/react/24/outline";
+import { PhotoIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 
 const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
@@ -60,14 +64,25 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
 
 
 const FolderItem = ({ item, onClick }) => {
-  const extensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "json", "avif"];
-  const isImage = extensions.includes(item.name.split('.').pop().toLowerCase());
+  const extensions = [
+    "jpg",
+    "jpeg",
+    "png",
+    "gif",
+    "bmp",
+    "webp",
+    "json",
+    "avif",
+  ];
+  const isImage = extensions.includes(item.name.split(".").pop().toLowerCase());
 
   return (
     <div
-      className={`bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2 ${isImage ? '' : 'hover:bg-gray-100'}`}
+      className={`bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow cursor-pointer border border-gray-200 flex items-center mb-2 ${
+        isImage ? "" : "hover:bg-gray-100"
+      }`}
       onClick={isImage ? null : () => onClick(item)}
-      style={{ cursor: isImage ? 'default' : 'pointer' }}
+      style={{ cursor: isImage ? "default" : "pointer" }}
     >
       {isImage ? (
         <PhotoIcon className="h-6 w-6 flex-shrink-0 text-blue-500 mr-2" />
@@ -80,14 +95,16 @@ const FolderItem = ({ item, onClick }) => {
       >
         {item.name}
       </span>
-      <span className="text-sm text-gray-500 mr-4">{item.totalItems} items</span>
+      <span className="text-sm text-gray-500 mr-4">
+        {item.totalItems} items
+      </span>
       <span className="text-sm text-gray-500">{item.lastModified}</span>
     </div>
   );
 };
 
 const Shimmer = () => (
-  <div className="shimmer w-full h-48 rounded-lg z-0"></div>
+  <div className="shimmer w-full h-48 rounded-lg"></div>
 );
 
 const FileItem = ({ item }) => {
@@ -100,7 +117,7 @@ const FileItem = ({ item }) => {
 
   useEffect(() => {
     if (loaded) {
-      const timer = setTimeout(() => setShowShimmer(false), 1000); 
+      const timer = setTimeout(() => setShowShimmer(false), 1000);
       return () => clearTimeout(timer);
     }
   }, [loaded]);
@@ -113,7 +130,9 @@ const FileItem = ({ item }) => {
           <img
             src={item.url}
             alt={item.name}
-            className={`w-full h-48 object-cover rounded-lg shadow-md ${loaded ? 'block' : 'hidden'}`}
+            className={`w-full h-48 object-cover rounded-lg shadow-md ${
+              loaded ? "block" : "hidden"
+            }`}
             onLoad={() => setLoaded(true)}
           />
         </>
@@ -135,6 +154,5 @@ const FileItem = ({ item }) => {
     </div>
   );
 };
-
 
 export default ItemList;
