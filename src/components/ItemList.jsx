@@ -58,6 +58,7 @@ const ItemList = ({ items, viewType, onFolderClick, isLoading }) => {
   );
 };
 
+
 const FolderItem = ({ item, onClick }) => {
   const extensions = ["jpg", "jpeg", "png", "gif", "bmp", "webp", "json", "avif"];
   const isImage = extensions.includes(item.name.split('.').pop().toLowerCase());
@@ -86,7 +87,7 @@ const FolderItem = ({ item, onClick }) => {
 };
 
 const Shimmer = () => (
-  <div className="shimmer w-full h-48 rounded-lg"></div>
+  <div className="shimmer w-full h-48 rounded-lg z-0"></div>
 );
 
 const FileItem = ({ item }) => {

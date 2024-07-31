@@ -43,7 +43,7 @@ const CommonHeader = ({
             {showAddFolder && (
               <button
                 onClick={() => setIsAddingFolder(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors whitespace-nowrap flex items-center"
+                className="bg-white text-black px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white whitespace-nowrap flex items-center border border-blue-500 transition-all duration-300 ease-in-out"
               >
                 <FiFolder className="mr-2" />
                 Add Folder
@@ -52,7 +52,7 @@ const CommonHeader = ({
             {showUploadFile && (
               <button
                 onClick={() => setIsUploadingFile(true)}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors whitespace-nowrap flex items-center"
+                className="bg-white text-black px-4 py-2 rounded-md hover:bg-blue-500 hover:text-white whitespace-nowrap flex items-center border border-blue-500 transition-all duration-300 ease-in-out"
               >
                 <FiUpload className="mr-2" />
                 Upload File

@@ -5,7 +5,7 @@ import Breadcrumb from "../breadcrumb/Breadcrumb";
 import { createFolder, uploadFile } from "../../utils/apis";
 import ItemList from "../ItemList";
 import useFolder from "../../hooks/useFolder";
-import { FiX } from "react-icons/fi";
+import { FiX, FiUploadCloud } from "react-icons/fi";
 import toast from "react-hot-toast";
 import Modal from "react-modal";
 import CommonHeader from "../../utils/CommonHeader";
@@ -99,6 +99,19 @@ const FolderContents = () => {
     }
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      setSelectedFile(files[0]);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedFile(null); 
+    setIsUploadingFile(false);
+  };
+
   const modalStyle = {
     content: {
       top: "50%",
@@ -107,7 +120,25 @@ const FolderContents = () => {
       bottom: "auto",
       marginRight: "-50%",
       transform: "translate(-50%, -50%)",
-      padding: "20px",
+      padding: '20px',
+      borderRadius: "8px",
+      maxWidth: "400px",
+      width: "100%",
+    },
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
+    },
+  };
+
+  const modalStyle2 = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      padding: 0,
       borderRadius: "8px",
       maxWidth: "400px",
       width: "100%",
@@ -192,35 +223,63 @@ const FolderContents = () => {
           Create Folder
         </button>
       </Modal>
+      
 
       {/* Upload File Modal */}
       <Modal
-        isOpen={isUploadingFile}
-        onRequestClose={() => setIsUploadingFile(false)}
-        style={modalStyle}
-        contentLabel="Upload File Modal"
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">Upload File</h2>
+      isOpen={isUploadingFile}
+      onRequestClose={closeModal}
+      style={modalStyle2}
+      contentLabel="Upload File Modal"
+    >
+      <div className="flex flex-col bg-white rounded-lg shadow-lg m-0">
+        <div>
+          <h2 className="text-lg font-semibold"></h2>
           <button
-            onClick={() => setIsUploadingFile(false)}
-            className="text-gray-500 hover:text-gray-700"
+            onClick={closeModal}
+            className="text-white hover:text-gray-200 transition-colors"
           >
-            <FiX size={24} />
+            <FiX size={20} />
           </button>
         </div>
-        <input
-          type="file"
-          onChange={(e) => setSelectedFile(e.target.files[0])}
-          className="w-full p-2 border rounded mb-4"
-        />
-        <button
-          onClick={handleFileUpload}
-          className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors"
+        <div
+          className="flex flex-col items-center justify-center p-4 bg-white border-dotted border-4 border-purple-300 rounded-2xl mx-4 mt-0"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop}
         >
-          Upload File
-        </button>
-      </Modal>
+          <FiUploadCloud size={48} className="text-gray-400 mb-2" />
+          <p className="text-gray-600 mb-1 text-sm text-center">Drag and drop your file here</p>
+          <p className="text-gray-400 mb-2 text-xs text-center">or</p>
+          <label className="cursor-pointer text-orange-600 hover:underline text-xs mb-2 text-center">
+            <input
+              type="file"
+              onChange={(e) => setSelectedFile(e.target.files[0])}
+              className="hidden"
+            />
+            Browse files
+          </label>
+          <div className="text-center mt-2">
+            {selectedFile ? (
+              <p className="text-gray-700 text-xs">Selected file: {selectedFile.name}</p>
+            ) : (
+              <p className="text-gray-500 text-xs">No file selected</p>
+            )}
+          </div>
+        </div>
+        <div className="p-3 bg-white flex justify-center">
+          <button
+            onClick={handleFileUpload}
+            className={`px-4 py-2 rounded-lg transition-colors ${
+              selectedFile ? 'bg-red-600 text-white hover:bg-red-700' : 'bg-gray-400 text-gray-700 cursor-not-allowed'
+            }`}
+            disabled={!selectedFile}
+          >
+            Upload File
+          </button>
+        </div>
+      </div>
+    </Modal>
+
     </Layout>
   );
 };
